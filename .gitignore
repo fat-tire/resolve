@@ -1,0 +1,6 @@
+.git
+**/mountpoints*
+**/mounts*
+**/volumes/*
+**/.DS_Store
+*.zip

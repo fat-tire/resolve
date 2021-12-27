@@ -1,0 +1,8 @@
+**/.cache
+**/mountpoints*
+**/mounts*
+**/volumes*
+**/.git
+**/.DS_Store
+*.md
+!README*.md

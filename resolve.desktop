@@ -1,0 +1,11 @@
+# adjust the path in the Exec line then
+# cp to ~/.local/share/applications/resolve.desktop 
+# don't forget the icon goes in ~/.local/share/icons/DV_Resolve.png
+
+[Desktop Entry]
+Name=DaVinci Resolve
+Icon=DV_Resolve.png
+Exec=bash -c "cd $HOME/containers/resolve && ./resolve.sh"
+Type=Application
+Terminal=false
+StartupNotify=true
