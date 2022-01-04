@@ -193,11 +193,11 @@ Because, except for those directories bind-mounted from Ubuntu to the container,
 
 By default, I opted to isolate the container from the Internet.  If you want to give it the same Internet access as your host computer, set an environment variable when running `./resolve.sh` like this:
 
-     NETWORK="host" ./resolve.sh
+     RESOLVE_NETWORK="host" ./resolve.sh
 
 This will use the host's network stack.  You can make this behavior persist for the session by setting the environment variable:
 
-     export NETWORK="host"
+     export RESOLVE_NETWORK="host"
 
 And you can add that line to `.bashrc` (or `~/.zshrc`, etc.) or the `resolve.desktop` file so that it is the setting every time.
 
@@ -331,6 +331,8 @@ Here are a few environment variables you can set when running `build.sh` and `re
 *  `RESOLVE_ENABLE_HOST_SYSTEM_FONTS` -- As mentioned above, you can set this to "YES" to include the Ubuntu host fonts at `/usr/share/fonts` to the container's `.local/share/fonts`.  Doing this however will significantly add many system fonts, many of which you probably won't need.
 
 *  `RESOLVE_NVIDIA_VERSION` -- When building the container image, you can set this to the version of the NVIDIA driver you want to install in the CentOS container.  The default is to match the version number of the NVIDIA driver on the host.
+
+*  `RESOLVE_NETWORK` -- Set to "host" to use the host's Internet/network connectivity.  Other network driver options are described in the [Docker](https://docs.docker.com/network/) and [Podman](https://docs.podman.io/en/latest/markdown/podman-run.1.html) documentation.  The default is "none", meaning the container will not have network access.
 
 These environment variables can be set at the time you run the command, like:
 

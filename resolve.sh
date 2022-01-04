@@ -87,10 +87,10 @@ fi
 
 echo "The container's /etc/machine-id  : "`cat ${RESOLVE_MOUNTS_PATH}/mounts/container-machine-id`
 
-if [ -z "$NETWORK" ]; then
+if [ -z "${RESOLVE_NETWORK}" ]; then
    export NET_DRIVER="--network=none"
 else
-   export NET_DRIVER="--network=${NETWORK}"
+   export NET_DRIVER="--network=${RESOLVE_NETWORK}"
 fi
 
 echo "The network driver setting is          : ${NET_DRIVER}"
