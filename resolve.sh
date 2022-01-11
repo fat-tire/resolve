@@ -152,6 +152,8 @@ ${CONTAINER_TYPE} run -it \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
      --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix \
      --mount type=bind,source=${XDG_RUNTIME_DIR}/pulse/native,target=${XDG_RUNTIME_DIR}/pulse/native \
+     --mount type=bind,source=/usr/share/icons,target=/usr/share/icons,readonly \
+     --mount type=bind,source=/etc/alternatives/x-cursor-theme,target=/usr/share/icons/default/index.theme,readonly \
      --mount type=bind,source=${HOME}/.config/pulse/cookie,target=/run/pulse/cookie \
      --mount type=bind,source=${HOME}/.local/share/fonts,target=/usr/share/fonts,readonly \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${MOUNTS_DIRNAME}/container-machine-id,target=/etc/machine-id \
