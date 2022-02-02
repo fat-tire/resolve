@@ -14,15 +14,22 @@ FROM centos:centos8
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
 ARG ARCH=x86_64
-ARG NVIDIA_VERSION=495.44
+ARG NVIDIA_VERSION=510.47
 ARG ZIPNAME
 
 # get x11 + nvidia + sound + other dependency stuff set up the machine ID
 #     libcurl-devel added to support fusion reactor installer
 #     see https://gitlab.com/WeSuckLess/Reactor/-/blob/master/Docs/Installing-Reactor.md#installing-reactor
+#
+#     12/31/21 CentOS 8 is EOL - https://forums.centos.org/viewtopic.php?f=54&t=78026
+#     Switch to CentOS 8 Stream!
 
 RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
+       && rm /etc/dnf/protected.d/setup.conf \
+       && dnf -y --disablerepo '*' --allowerasing install http://mirror.centos.org/centos/8-stream/BaseOS/${ARCH}/os/Packages/{centos-gpg-keys-8-4.el8.noarch.rpm,centos-stream-release-8.5-2.el8.noarch.rpm,centos-stream-repos-8-4.el8.noarch.rpm} \
+       && dnf -y swap centos-linux-repos centos-stream-repos \
+       && dnf -y distro-sync \
        && dnf update -y \
        && dnf install dnf-plugins-core -y \
        && dnf config-manager --set-enabled powertools \
