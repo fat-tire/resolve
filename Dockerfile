@@ -6,10 +6,12 @@
 #          ./build.sh
 
 #-----------
-#  To build, we start with a recent version of Centos (8)
-#
+#  To build, we start with a recent version of Centos Stream
+#     12/31/21 CentOS 8 is EOL - https://forums.centos.org/viewtopic.php?f=54&t=78026
+#     Switch to official CentOS Stream from quay.io
+#     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-FROM centos:centos8
+FROM quay.io/centos/centos:stream
 
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
@@ -20,21 +22,16 @@ ARG ZIPNAME
 # get x11 + nvidia + sound + other dependency stuff set up the machine ID
 #     libcurl-devel added to support fusion reactor installer
 #     see https://gitlab.com/WeSuckLess/Reactor/-/blob/master/Docs/Installing-Reactor.md#installing-reactor
-#
-#     12/31/21 CentOS 8 is EOL - https://forums.centos.org/viewtopic.php?f=54&t=78026
-#     Switch to CentOS 8 Stream!
+
+# Future: when bluetooth works with speed editor in Linux, add these packages:  bluez avahi dbus-x11 nss-mdns
 
 RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
-       && rm /etc/dnf/protected.d/setup.conf \
-       && dnf -y --disablerepo '*' --allowerasing install http://mirror.centos.org/centos/8-stream/BaseOS/${ARCH}/os/Packages/{centos-gpg-keys-8-4.el8.noarch.rpm,centos-stream-release-8.5-2.el8.noarch.rpm,centos-stream-repos-8-4.el8.noarch.rpm} \
-       && dnf -y swap centos-linux-repos centos-stream-repos \
-       && dnf -y distro-sync \
        && dnf update -y \
        && dnf install dnf-plugins-core -y \
        && dnf config-manager --set-enabled powertools \
        && dnf install epel-release -y \
-       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib alsa-plugins-pulseaudio librsvg2 libGLU sudo -y \
+       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib alsa-plugins-pulseaudio librsvg2 libGLU sudo module-init-tools libgomp -y \
        && dnf install libcurl-devel -y \
        && curl https://us.download.nvidia.com/XFree86/Linux-${ARCH}/${NVIDIA_VERSION}/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run -o /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --ui=none \
