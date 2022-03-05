@@ -100,7 +100,7 @@ Will this work with other specialized editing/camera/etc hardware?  Not sure!
 
 2. Install Podman [or Docker] and and other dependencies with this command: 
      
-    `sudo apt install -y podman fuseoverlayfs nvidia-container-runtime crun`
+    `sudo apt install -y podman fuse-overlayfs nvidia-container-runtime crun`
 
     (Alternately, you can `apt install -y docker` instead of podman.  But IMO Podman is better/safer.)
  
