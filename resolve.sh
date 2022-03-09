@@ -119,6 +119,12 @@ if ! [ -z ${RESOLVE_ENABLE_HOST_SYSTEM_FONTS} ]; then
    export MOUNT_SYSTEM_FONTS="--mount type=bind,source=/usr/share/fonts,target=/home/resolve/.local/share/fonts"
 fi
 
+# mint does not set XDG_RUNTIME_DIR, so set it if unset.
+
+if [ -z ${XDG_RUNTIME_DIR+x} ]; then
+   export XDG_RUNTIME_DIR=/run/user/`id -u`
+fi
+
 # quick sanity check.
 
 if [ -z "${XAUTHORITY}" ]; then
