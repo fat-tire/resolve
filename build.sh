@@ -32,6 +32,15 @@ if ! ls "${ZIPNAME}" 1> /dev/null 2>&1; then
     exit 1
 fi
 
+if [ -z "${BASE_DOCKER_IMAGE}" ]; then
+   export BASE_IMAGE="quay.io/centos/centos:stream"
+   echo "NOT SET"
+else
+   export BASE_IMAGE="${BASE_DOCKER_IMAGE}"
+   echo "SET"
+fi
+
+
 # get resolve version for image tag
 
 export REGEX='.*[Resolve|Studio]_([0-9|\.]+)_Linux.zip'
@@ -67,7 +76,7 @@ fi
 
 echo "Building the resolve:${TAG} image..."
 
-${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`arch` --build-arg ZIPNAME="${ZIPNAME}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}"
+${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`arch` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}"
 
 # remove any context link
 if [ -f "${CONTEXT_ZIP}" ]; then

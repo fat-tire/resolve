@@ -11,7 +11,9 @@
 #     Switch to official CentOS Stream from quay.io
 #     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-FROM quay.io/centos/centos:stream
+ARG BASE_IMAGE
+
+FROM ${BASE_IMAGE}
 
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
