@@ -34,7 +34,7 @@ fi
 
 # get resolve version for image tag
 
-export REGEX='.*[Resolve|Studio]_([0-9|\.]+)_Linux.zip'
+export REGEX='.*[Resolve|Studio]_([0-9|\.|b]+)_Linux.zip'
 
 [[ $ZIPNAME =~ $REGEX ]]
 
