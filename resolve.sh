@@ -153,6 +153,7 @@ ${CONTAINER_TYPE} run -it \
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
+     --device-cgroup-rule "c 239:* rwm" \
      --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
