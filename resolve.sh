@@ -113,7 +113,7 @@ do
 	# probe for Speed Editor, VID/PID is hardcoded
 	DEV=`udevadm info -q property ${f}`
 	if [[ "${DEV}" == *"1EDB:DA0E"* ]]; then
-		echo "Detected Sped Editor on" ${f}
+		echo "Detected Speed Editor on" ${f}
 		eval ${DEV} # udevadm's output looks like variables
 		# note that "eval" could be dangerous if ${DEV} somehow contains something nefarious
 		MOUNTS_HIDRAW="--mount type=bind,source=${f},target=${f} "
