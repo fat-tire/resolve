@@ -106,11 +106,23 @@ echo "  /opt/resolve/'Resolve Disk Database'  -> ${RESOLVE_MOUNTS_PATH}/${RESOLV
 echo "  /var/BlackmagicDesign/DaVinci Resolve -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR}"
 echo "  /opt/resolve/Media                    -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA}"
 
-# mount all hidraws - used for speed editor hardware
+# Detect Speed Editor, mount HID raw device and set cgroup rule
 
 for f in `find /dev/hidraw*`
 do
-  MOUNTS_HIDRAW+="--mount type=bind,source=${f},target=${f} "
+	# probe for Speed Editor, VID/PID is hardcoded
+	DEV=`udevadm info -q property ${f}`
+	if [[ "${DEV}" == *"1EDB:DA0E"* ]]; then
+		echo "Detected Sped Editor on" ${f}
+		eval ${DEV} # udevadm's output looks like variables
+		# note that "eval" could be dangerous if ${DEV} somehow contains something nefarious
+		MOUNTS_HIDRAW="--mount type=bind,source=${f},target=${f} "
+		CGROUP_RULE="--device-cgroup-rule"="c ${MAJOR}:${MINOR} rwm"
+		break
+	else
+		echo "No Speed Editor detected"
+		CGROUP_RULE="-e BLANK"="0"
+	fi
 done
 
 # enable host's system fonts (put it in $HOME/.local/share/fonts in container)
@@ -153,7 +165,7 @@ ${CONTAINER_TYPE} run -it \
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
-     --device-cgroup-rule "c 239:* rwm" \
+     "${CGROUP_RULE}" \
      --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
