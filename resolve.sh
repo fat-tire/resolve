@@ -9,6 +9,21 @@ announce () {
 
 source ${BASH_SOURCE%/*}/env-set.sh
 
+# Set up any extra target/source mounts
+
+export SRC_CNT="${#RESOLVE_BIND_SOURCES[@]}"
+export TGT_CNT="${#RESOLVE_BIND_TARGETS[@]}"
+
+if [[ ${SRC_CNT} != ${TGT_CNT} ]]
+then
+  echo "You need one matching target dir for every source dir in RESOLVE_BIND_SOURCES and RESOLVE_BIND_TARGETS"
+  exit 1
+fi
+
+for i in "${!RESOLVE_BIND_SOURCES[@]}"; do
+   MOUNT_EXTRAS+=( --mount type=bind,source="${RESOLVE_BIND_SOURCES[i]}",target="${RESOLVE_BIND_TARGETS[i]}" )
+done
+
 # allow local access to xwindows
 xhost +local:resolve
 
@@ -106,6 +121,11 @@ echo "  /opt/resolve/'Resolve Disk Database'  -> ${RESOLVE_MOUNTS_PATH}/${RESOLV
 echo "  /var/BlackmagicDesign/DaVinci Resolve -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR}"
 echo "  /opt/resolve/Media                    -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA}"
 
+if [[ "${SRC_CNT}" -ne "0" ]]; then
+  echo "Extra custom ${SRC_CNT} mount(s):"
+  echo "  " "${MOUNT_EXTRAS[@]}"
+fi
+
 # mount all hidraws - used for speed editor hardware
 
 for f in `find /dev/hidraw*`
@@ -173,6 +193,7 @@ ${CONTAINER_TYPE} run -it \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA},target=/opt/resolve/Media \
      ${MOUNT_SYSTEM_FONTS} \
      ${MOUNTS_HIDRAW} \
+     "${MOUNT_EXTRAS[@]}" \
      ${NET_DRIVER} \
      ${CONTAINER_RUN_ARGS} \
      --rm \

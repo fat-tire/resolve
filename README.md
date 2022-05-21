@@ -340,7 +340,18 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 *  `RESOLVE_NETWORK` -- Set to "host" to use the host's Internet/network connectivity.  Other network driver options are described in the [Docker](https://docs.docker.com/network/) and [Podman](https://docs.podman.io/en/latest/markdown/podman-run.1.html) documentation.  The default is "none", meaning the container will not have network access.
 
-* `RESOLVE_RC_PATH` -- A path to a configuration/autorun script.  See explanation below.
+* `RESOLVE_BIND_SOURCES` and `RESOLVE_BIND_TARGETS` -- Use these to add your own custom bindings from the host to the container.
+
+Say you want to map `/tmp/garbage` on your host to `/tmp` in the container.  You also want to map `/var/run/dbus/system_bus_socket` from the host to the container.  You can do this like this.
+
+     RESOLVE_BIND_SOURCES=("/tmp" "/var/run/dbus/system_bus_socket")
+     RESOLVE_BIND_TARGETS=("/tmp/garbage" "/var/run/dbus/system_bus_socket")
+
+In this case, two additional `--bind` arguments will be automatically generated and included when you run Resolve.
+
+**Note that `RESOLVE_BIND_SOURCES` and `RESOLVE_BIND_TARGETS` can ONLY be used inside a `resolve.rc` file with `RESOLVE_RC_PATH` and will NOT work from the command line.  This is due to an issue the `bash` shell has with passing arrays into scripts.  So put it in a configuration file.**
+
+* `RESOLVE_RC_PATH` -- A path to a configuration/auto-run script.  See explanation below.
 
 ### Making these configurations stick around
 
@@ -356,6 +367,8 @@ So just create a new file `resolve.rc`.  It might look like this
      RESOLVE_LICENSE_AGREE="Y"
      RESOLVE_NETWORK="host"
      RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip
+     RESOLVE_BIND_SOURCES=("/tmp" "/var/run/dbus/system_bus_socket")
+     RESOLVE_BIND_TARGETS=("/tmp/garbage" "/var/run/dbus/system_bus_socket")
      # add any other configurations or commands here
      
      echo "environment variables are set!"
