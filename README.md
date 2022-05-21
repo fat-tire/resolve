@@ -197,7 +197,7 @@ This will use the host's network stack.  You can make this behavior persist for 
 
      export RESOLVE_NETWORK="host"
 
-And you can add that line to `.bashrc` (or `~/.zshrc`, etc.) or the `resolve.desktop` file so that it is the setting every time.
+You can add that line to `.bashrc` (or `~/.zshrc`, etc.) or the `resolve.desktop` file so that it is the setting every time.  (You can also create a `resolve.rc` file with this and other custom settings and runtime instructions.  More on that below.)
 
 **NOTE:  If you are enabling the Internet to activate a registration code, read the next bit!**
 
@@ -340,7 +340,33 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 *  `RESOLVE_NETWORK` -- Set to "host" to use the host's Internet/network connectivity.  Other network driver options are described in the [Docker](https://docs.docker.com/network/) and [Podman](https://docs.podman.io/en/latest/markdown/podman-run.1.html) documentation.  The default is "none", meaning the container will not have network access.
 
-These environment variables can be set at the time you run the command, like:
+* `RESOLVE_RC_PATH` -- A path to a configuration/autorun script.  See explanation below.
+
+### Making these configurations stick around
+
+#### Use a `resolve.rc` file to set configurations and run any "pre-flight" commands
+
+* `RESOLVE_RC_PATH` -- using this single environment variable, you can direct `./resolve.sh` and `build.sh` to run a configuration file, say `resolve.rc`,  every time before starting Resolve.  This is perfect for setting all the environment variables together in one place, which can be anywhere you want.
+
+So just create a new file `resolve.rc`.  It might look like this
+
+     # resolve.rc
+     # This will be run every time I run resolve.sh or build.sh!
+     
+     RESOLVE_LICENSE_AGREE="Y"
+     RESOLVE_NETWORK="host"
+     RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip
+     # add any other configurations or commands here
+     
+     echo "environment variables are set!"
+
+(A security note-- this file will be `source`d, that is, *run* from `./build.sh` and `resolve.sh`, so be sure to limit access and privileges to this file appropriately.)
+
+With all your configurations gathered together in one file, you now only need to set one environment variable, `RESOLVE_RC_PATH`, using any of the methods below:
+
+#### At run time in the command itself
+
+Environment variables can be set at the time you run the command, like:
 
      RESOLVE_TAG="MyTest" RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip RESOLVE_LICENSE_AGREE="YES" RESOLVE_MOUNTS_PATH="/mnt/myContainers/resolve" ./build.sh
      
@@ -348,11 +374,21 @@ or
      
      RESOLVE_ENABLE_HOST_SYSTEM_FONTS="yes" RESOLVE_TAG="MyTest RESOLVE_MOUNTS_PATH="/mnt/myContainers/resolve" ./resolve.sh
 
+or if you use `resolve.rc`, simply do
+
+     RESOLVE_RC_PATH=./resolve.rc ./resolve.sh
+
+#### Hand-entered in a local shell environment
+
 You can also set these in advance:
 
      export RESOLVE_ZIP=/tmp/DaVinci_Resolve_Studio_17.4.3_Linux.zip
 
-Then when you `./build.sh` the next time (at least in this [shell](https://en.wikipedia.org/wiki/Shell_(computing))), it will remember the RESOLVE_ZIP.  To make this more permanent, add to your `~/.bashrc`, `~/.zshrc`, or whatever autoruns when you start a new shell.
+Then when you `./build.sh` the next time (at least in this [shell](https://en.wikipedia.org/wiki/Shell_(computing))), it will remember the RESOLVE_ZIP.
+ 
+####  Set via .bashrc or .zshrc autorun files
+
+As mentioned, you can make this more permanent by assigning these environment variable to your `~/.bashrc`, `~/.zshrc`, or whatever autoruns when you start a new shell.
 
 ### What's next?
 

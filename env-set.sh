@@ -4,6 +4,13 @@
 
 REPO_DIR=$(dirname $(realpath -s $0))
 
+# if RESOLVE_RC_PATH is set, source it to pull in additional ENV settings, run pre-flight commands, etc.
+
+if ! [ -z ${RESOLVE_RC_PATH} ]; then
+   echo "Running:  " ${RESOLVE_RC_PATH}
+   source "${RESOLVE_RC_PATH}"
+fi
+
 # determine if podman or docker installed
 
 if ! command -v podman &> /dev/null; then
