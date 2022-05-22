@@ -126,23 +126,38 @@ if [[ "${SRC_CNT}" -ne "0" ]]; then
   echo "  " "${MOUNT_EXTRAS[@]}"
 fi
 
-# Detect Speed Editor, mount HID raw device and set cgroup rule
+# Detect Speed Editor, mount HID raw device, and set cgroup rule
 
 for f in `find /dev/hidraw*`
 do
-	# probe for Speed Editor, VID/PID is hardcoded
+  if ! command udevadm &> /dev/null; then
+	# probe for Speed Editor & other BMD hw, VID/PID is hardcoded
 	DEV=`udevadm info -q property ${f}`
-	if [[ "${DEV}" == *"1EDB:DA0E"* ]]; then
-		echo "Detected Speed Editor on" ${f}
-		eval ${DEV} # udevadm's output looks like variables
-		# note that "eval" could be dangerous if ${DEV} somehow contains something nefarious
-		MOUNTS_HIDRAW="--mount type=bind,source=${f},target=${f} "
-		CGROUP_RULE="--device-cgroup-rule"="c ${MAJOR}:${MINOR} rwm"
-		break
+	if [[ "${DEV}" == *":1EDB:"* ]]; then
+           case "${DEV}" in
+             *"1EDB:DA0E"* ) PROD="Speed Editor";;
+             *"1EDB:BD3B"* ) PROD="Intensity Shuttle";;
+             *"1EDB:BD46"* ) PROD="Mini Converter Analog to SDI";;
+             *"1EDB:BD75"* ) PROD="2.5K Cinema Camera (BMCC)";;
+             *"1EDB:BD48"* ) PROD="ATEM M/E Production Switcher";;
+             *"1EDB:BE49"* ) PROD="ATEM Mini";;
+             *"1EDB:BD4f"* ) PROD="UltraStudio SDI";;
+             *"1EDB:BE55"* ) PROD="ATEM Mini Pro XML";;
+             * ) PROD="Unknown";;
+           esac
+           echo "Granting access to BlackMagic Design hardware (${PROD}) on" ${f}
+           eval "${DEV}" # udevadm's output looks like variables
+           # note that "eval" could be dangerous if ${DEV} somehow contains something nefarious
+           MOUNTS_HIDRAW+="--mount type=bind,source=${f},target=${f} "
+           CGROUP_RULE+="--device-cgroup-rule"="c ${MAJOR}:${MINOR} rwm "
+           break
 	else
-		echo "No Speed Editor detected"
-		CGROUP_RULE="-e BLANK"="0"
+           CGROUP_RULE+="-e BLANK"="0"
 	fi
+  else
+    echo "Note:  udevadm must be installed to detect Blackmagic hardware at ${f}."
+    CGROUP_RULE+="-e BLANK"="0"
+  fi
 done
 
 # enable host's system fonts (put it in $HOME/.local/share/fonts in container)
