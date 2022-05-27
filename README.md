@@ -1,5 +1,54 @@
 # Containerizing DaVinci Resolve [Studio] in x86_64 Linux w/NVIDIA
 
+## Contents
+
+- [Introduction](#introduction)
+  * [What is DaVinci Resolve?](#what-is-davinci-resolve)
+  * [Let's use a container!](#lets-use-a-container)
+  * [So, to sum up-- what's the big advantage of using a container?](#so-to-sum-up---whats-the-big-advantage-of-using-a-container)
+  * [Cool, cool.  I'm sold on at least trying this idea.  But which container system to use?  Linux has a few.](#cool-cool--im-sold-on-at-least-trying-this-idea--but-which-container-system-to-use--linux-has-a-few)
+  * [Can't both Docker AND podman work?](#cant-both-docker-and-podman-work)
+  * [Wait- a user named "resolve" will run Resolve?  But _I_ want to run it!  How will I access the projects and stuff?](#wait-a-user-named-resolve-will-run-resolve-but-i-want-to-run-it-how-will-i-access-the-projects-and-stuff)
+  * [Mapping directories (that is, bind-mounting folders) from CentOS to the host](#mapping-directories-that-is-bind-mounting-folders-from-centos-to-the-host)
+  * [Sounds cool.](#sounds-cool)
+  * [USB dongles & Registration Codes](#usb-dongles--registration-codes)
+  * [Speed editor and other USB hardware](#speed-editor-and-other-usb-hardware)
+- [Instructions](#instructions)
+  * [What you'll need to try this](#what-youll-need-to-try-this)
+  * [First add a udev rules file](#first-add-a-udev-rules-file)
+  * [Installing, step-by-step](#installing-step-by-step)
+  * [Make a Dock desktop shortcut](#make-a-dock-desktop-shortcut)
+- [Troubleshooting](#troubleshooting)
+  * [I can't move or resize Resolve's main window!  It's locked in place!](#i-cant-move-or-resize-resolves-main-window--its-locked-in-place)
+  * [The windows are way too small (or too large)!](#the-windows-are-way-too-small-or-too-large)
+  * [Why doesn't drag and drop work from the host?](#why-doesnt-drag-and-drop-work-from-the-host)
+  * [Resolve doesn't have network access!](#resolve-doesnt-have-network-access)
+  * [Can I use a registration code to activate Resolve Studio in the container?](#can-i-use-a-registration-code-to-activate-resolve-studio-in-the-container)
+  * [Does the speed editor work with a *bluetooth* connection rather than USB?](#does-the-speed-editor-work-with-a-bluetooth-connection-rather-than-usb)
+  * [Can I update the speed editor's firmware with this container?](#can-i-update-the-speed-editors-firmware-with-this-container)
+  * [What about using postgresql so multiple editors can connect to work on one project?](#what-about-using-postgresql-so-multiple-editors-can-connect-to-work-on-one-project)
+  * [What version of the NVIDIA driver is the container using?](#what-version-of-the-nvidia-driver-is-the-container-using)
+  * [How can I poke around the CentOS container from the command line?](#how-can-i-poke-around-the-centos-container-from-the-command-line)
+  * [Will the container work with other distributions of Linux besides Ubuntu?](#will-the-container-work-with-other-distributions-of-linux-besides-ubuntu)
+  * [Where should I put my raw media files or my plugins or new fonts or sound effects libraries etc.?](#where-should-i-put-my-raw-media-files-or-my-plugins-or-new-fonts-or-sound-effects-libraries-etc)
+  * [How do I install the (royalty) free Blackmagic Sound Library?](#how-do-i-install-the-royalty-free-blackmagic-sound-library)
+  * [Resolve won't restart!](#resolve-wont-restart)
+  * [What's the deal with fonts?  Where are they coming from?](#whats-the-deal-with-fonts--where-are-they-coming-from)
+  * [Can I put this repository folder somewhere other than `~/containers/resolve`?](#can-i-put-this-repository-folder-somewhere-other-than-containersresolve)
+- [Configuration](#configuration)
+  * [The RESOLVE_ environment variables](#the-resolve_-environment-variables)
+  * [Making these configurations stick around](#making-these-configurations-stick-around)
+    + [Use a `resolve.rc` file to set configurations and run any "pre-flight" commands](#use-a-resolverc-file-to-set-configurations-and-run-any-pre-flight-commands)
+    + [At run time in the command itself](#at-run-time-in-the-command-itself)
+    + [Hand-entered in a local shell environment](#hand-entered-in-a-local-shell-environment)
+    + [Set via .bashrc or .zshrc autorun files](#set-via-bashrc-or-zshrc-autorun-files)
+- [What's next?](#whats-next)
+- [Thanks.](#thanks)
+- [Last thought-- buy this thing!](#last-thought---buy-this-thing)
+- [Disclaimer](#disclaimer)
+
+# Introduction
+
 Note:  Please read this in its entirety, including caveats and disclaimers, to understand what you're doing and some of the risks involved.  This document was initially written with [Ubuntu Linux](https://www.ubuntu.com) users in mind, but others running distributions including Mint, PopOS, RockyOS, and more have reported success too.
 
 ## What is DaVinci Resolve?
@@ -22,7 +71,7 @@ The goal will be to make it as seamless as possible with the host computer.
 
 Several years ago, [VertexStudio](https://vertexstudio.co/) committed a [method for containerizing DaVinci Resolve to github](https://github.com/VertexStudio/docker-resolve).  Unfortunately, it didn't quite work for me on newer versions of Ubuntu/Resolve.  Still, that earlier repository was very helpful as a reference, so thanks to @rozgo for the great write-up in his [README.md](https://github.com/VertexStudio/docker-resolve/blob/master/README.md), which you should probably look at as well for a bit of context and some more info on why this might be worthwhile, and some more tips.
 
-## So, to sum up-- what's the big advantage of a using a container?
+## So, to sum up-- what's the big advantage of using a container?
 
 Besides running DaVinci Resolve in its actual intended operating system (CentOS) without ever leaving the comfort of your own non-Centos Linux machine, containers offer some other big advantages:
 
@@ -42,9 +91,9 @@ RedHat has developed an alternative, mostly-Docker-compatible system called the 
 
 Both Podman and Docker are available in most Linux distributions and can be installed easily.  On Debian-derived Linux such as Ubuntu, Mint, and PopOS, this is accomplished via [apt](https://en.wikipedia.org/wiki/APT_(software)).
 
-## I can't decide... can we make BOTH work?
+## Can't both Docker AND Podman work?
 
-Sure.  If you have Podman running and prefer that, great.  Or use Docker.  Whatever.
+Sure, why not.  If you have Podman running and prefer that, great.  Or use Docker.  Whatever.
 
 So here's the plan on building the image-- we'll start with the official CentOS 8 Stream, then update the packages and add some dependencies needed for DaVinci Resolve.  Y'know, drivers and libraries and stuff.  Then install DaVinci Resolve from the official zip file you can get from the website.  Then create a user called "resolve" in the CentOS container.  That's the user who will run resolve in CentOS.
 
@@ -82,9 +131,9 @@ If you use Registration Codes instead, there's information below about trying to
 
 I also set up the `resolve.sh` startup script to bind mount all the [HID](https://en.wikipedia.org/wiki/Human_interface_device) `/dev/hidraw#` device files to allow the speed editor hardware and I assume other keyboards and input devices to work.  At least it did for me.
 
-On most Linux systems, you'll need to grant special access to the USB devices, so adding a `70-blackmagic-design.rules` [udev](https://www.freedesktop.org/software/systemd/man/udev.html) file is a good idea.  One is provided in this repository.  Just copy this file to `/etc/udev/rules.d/` or wherever udev rule files should be put on your Linux distribution.
-
 Will this work with other specialized editing/camera/etc hardware?  Not sure!
+
+# Instructions
 
 ## What you'll need to try this
 
@@ -94,7 +143,11 @@ Will this work with other specialized editing/camera/etc hardware?  Not sure!
  - Optional:  The DaVinci Resolve Speed Editor (USB only-- see below about BlueTooth operation)
  - Optional:  A registration code-- but again **try this at your own risk/peril!**
 
-## How to set it up
+## First add a udev rules file
+
+On most Linux systems, you'll need to grant special access to the USB devices, so adding a `70-blackmagic-design.rules` [udev](https://www.freedesktop.org/software/systemd/man/udev.html) file on the host computer is a good idea.  An example file is provided in this repository.  Just copy `70-blackmagic-design.rules` to `/etc/udev/rules.d/` or wherever udev rule files should be put on your Linux distribution.
+
+## Installing, step-by-step
 
 1. On the Linux host, install the latest official proprietary NVIDIA drivers.  In Ubuntu, you can do this in the **Software & Updates** app, in the **Additional Drivers** tab.  Reboot and make sure everything works okay.  I have the computer running in "discrete" mode (set in the BIOS).  Not sure if this is needed.  Also, I am logged in using X11 (Xwindows) in the Desktop.  Not sure how well Wayland will work, although it theoretically *should* be compatible.  (You can switch your desktop from Wayland to X11 in Ubuntu's account login screen.)  Other versions of Linux may have their own method of installing the drivers, so time to [Google that](https://www.google.com/search?q=nvidia+how+to+install+drivers+linux)!
 
@@ -169,13 +222,13 @@ If it worked, you probably don't want to have to type a command every time you w
 5.  Right-click the icon and choose "Add to Favorites"
 4.  At this point the icon should appear in your dock.  Click once to launch it.
 
-## Troubleshooting
+# Troubleshooting
 
-### I can't move or resize Resolve's main window!  It's locked in place!
+## I can't move or resize Resolve's main window!  It's locked in place!
 
 Try holding down the **Super** key (which often has a Windows logo).  You should then be able to move or resize the DaVinci Resolve window.  A center-button mouse press should also bring options for minimizing, maximizing, etc.
 
-### The windows are way too small (or too large)!
+## The windows are way too small (or too large)!
 
 Play with these lines in `resolve.sh` to adjust how big Resolve appears on your screen:
 
@@ -185,11 +238,11 @@ Play with these lines in `resolve.sh` to adjust how big Resolve appears on your 
      --env QT_SCALE_FACTOR=2 \
      --env QT_FONT_DPI=96 \
 
-### Why doesn't drag and drop work from the host?
+## Why doesn't drag and drop work from the host?
 
 Because, except for those directories bind-mounted from the host to the container, the container doesn't know about the host's desktop-- it's running in CentOS, remember?  You can share screen and sound output and mouse/keyboard/speed editor input, copy/paste text but that's about it.  There may be a way via X11 or GNOME Desktop standards to enable drag and drop with a container, but if so I don't know anything about it.
 
-### Resolve doesn't have network access!
+## Resolve doesn't have network access!
 
 By default, I opted to isolate the container from the Internet.  If you want to give it the same Internet access as your host computer, set an environment variable when running `./resolve.sh` like this:
 
@@ -203,11 +256,11 @@ You can add that line to `.bashrc` (or `~/.zshrc`, etc.) or the `resolve.desktop
 
 **NOTE:  If you are enabling the Internet to activate a registration code, read the next bit!**
 
-### Can I use a registration code to activate Resolve Studio in the container?
+## Can I use a registration code to activate Resolve Studio in the container?
 
 **IMPORTANT NOTICE:  I HAVE NOT TESTED THE DAVINCI RESOLVE STUDIO REGISTRATION CODES-- ONLY THE DONGLES-- FROM INSIDE A CONTAINER.  I DO NOT KNOW HOW THE REGISTRATION CODES WORKS NOR HOW IT WILL HANDLE CONTAINERS.  TRY THIS ENTIRELY AT YOUR OWN RISK!  I AM NOT RESPONSIBLE FOR LOST/WASTED CODES!**
 
-If you are using Resolve Studio with a registration code, I believe the container should need Internet access so Resolve can contact BlackMagic Design's servers.  I have not tested this functionality in any way, and there may be unforeseen consequences of using a registration code from within a container!
+If you are using Resolve Studio with a registration code, I believe the container should need Internet access so Resolve can contact Blackmagic Design's servers.  I have not tested this functionality in any way, and there may be unforeseen consequences of using a registration code from within a container!
 
 For example-- one way a unique machine can be identified in Linux is by looking at the value of `/etc/machine-id`.  Your host has one `machine-id` value, but it seems weird to pass through the _same_ `machine-id` on a container.  So instead I made it so the CentOS container you create will derive its `machine-id` specifically from your host computer's `machine-id` if it exists (without being identical) and store this derived `machine-id` in your `mounts` directory (named appropriately enough, `container-machine-id`).  Using this _should_ make it so that running newly-built images with updated resolve versions would be consistent at least in terms of the `machine-id`.
 
@@ -217,11 +270,11 @@ Again, I have *no idea* if the `machine-id` is in any way used to identify your 
 
 Hope that's clear.  Post on reddit or something if you have thoughts on this as well as any code adjustments that are needed, which can be submitted as a pull request.
 
-### Does the speed editor work with a *bluetooth* connection rather than USB?
+## Does the speed editor work with a *bluetooth* connection rather than USB?
 
 Not yet.  This seems to be an issue not with containers but with either the speed editor firmware or in DaVinci Resolve itself.  Wait for an update I guess.  Becuase it doesn't seem to work yet, this container does not yet install or configure the avahi, dbus, and bluez-hid2hci packages which it might need for future bluetooth support.
 
-### Can I update the speed editor's firmware with this container?
+## Can I update the speed editor's firmware with this container?
 
 I was able to update the firmware on the Speed Editor from within the container via USB by manually running the Control Panels Setup:
 
@@ -231,21 +284,21 @@ You'll get a shell running in the container.  Now type:
 
      /opt/resolve/DaVinci\ Control\ Panels\ Setup/DaVinci\ Control\ Panels\ Setup
 
-### What about using postgresql so multiple editors can connect to work on one project?
+## What about using postgresql so multiple editors can connect to work on one project?
 
 This script runs the basic single-user installation of DaVinci Resolve with the file-based database, not postgresql.  If you want to use the postgresql database, you'll have to modify the dockerfile to install and configure the database for you and open a port for access.  Should not be too difficult, but perhaps someone else might try it?
 
-### What version of the NVIDIA driver is the container using?
+## What version of the NVIDIA driver is the container using?
 
 By default it should detect the version YOU were running when you created it.  In the future, you'll probably want to rebuild the container (which again, _shouldn't_ affect the stuff inside your `mounts` directory since that's really on your host computer) when you update your host's NVIDIA driver so that they match again.  This can be done by simply re-running `build.sh` again.
 
-### How can I poke around the CentOS container from the command line?
+## How can I poke around the CentOS container from the command line?
 
 As shown above-- instead of `./resolve.sh` try `./resolve.sh /bin/bash` to get a prompt in CentOS.  You can get a root shell (no password needed) by typing `sudo bash`.  (If you want to disable "resolve"'s access to root privileges or change its password from "resolve", you just need to change the `Dockerfile` lines.)
 
 Be advised that changes you make to a non-bind mounted directory inside the container will be *GONE* the next time you run the container, so if you want to keep the changes, bind-mount the directory where you're making changes to somewhere on your host.  This is because by default changes are abandoned and a "fresh" version of the container is run every time.  (In other words, I tried to make it [ephemeral](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#create-ephemeral-containers).)
 
-### Will the container work with other distributions of Linux besides Ubuntu?
+## Will the container work with other distributions of Linux besides Ubuntu?
 
 Yes!  This has been confirmed working in the following distributions:
 
@@ -257,7 +310,7 @@ Yes!  This has been confirmed working in the following distributions:
 
 It probably will work in any distribution that derives from Debian.  Untested are the various non-GNOME versions of Ubuntu (Xubuntu, Kubuntu, Lubuntu, etc.)  It probably will not work on non x86_64 versions of Linux simply because (as far as I know) DaVinci Resolve is only available for that architecture.
 
-### Where should I put my raw media files or my plugins or new fonts or sound effects libraries etc.?
+## Where should I put my raw media files or my plugins or new fonts or sound effects libraries etc.?
 
 Fonts you can just add to your local host's user, but the rest-- that's kinda up to you.  Does Resolve have a standard place for raw media?  As I said, I'm new to Resolve.
 
@@ -269,7 +322,7 @@ As for sound effects libraries, etc-- I guess you can put those anywhere in the 
 
 From what I'm reading, you can even use `--mount` or --[volume](https://docs.docker.com/storage/volumes) to access remote file servers, USB thumb drives, or some other fancy data store from inside the container.  See the Docker/podman docs for more on how this would work.  I have no clue.
 
-### How do I install the (royalty) free Blackmagic Sound Library?
+## How do I install the (royalty) free Blackmagic Sound Library?
 
 If you enable the Internet, you should be able to install it right in Resolve, in Fairlight.  However, if you want to download the zip and install it manually without the Internet enabled, here are steps that might work:
 
@@ -302,11 +355,11 @@ If it looks good, quit resolve, and then, still in the container, remove that `t
  
 That should be all there is to it!
 
-### Resolve won't restart!
+## Resolve won't restart!
 
 Maybe there's an old container still running?  You can use `podman ps -a` to check and `podman rm --force resolve_container` to kill a container if it's stuck.  Obviously replace `podman` with `docker` if that's what you're using.
 
-### What's the deal with fonts?  Where are they coming from?
+## What's the deal with fonts?  Where are they coming from?
 
 There seems to be a [bug in Resolve](https://forum.blackmagicdesign.com/viewtopic.php?f=21&t=144683) as of at least version 17.2.2 Build 4-- where the normal title generator can find BOTH the system and user-installed fonts, but the Fusion Titles and Title+ [skip some](https://old.reddit.com/r/blackmagicdesign/comments/9x0qzv/text_doesnt_use_system_fonts/). It seemed like the most reliable place for Resolve to find fonts was the container's `/usr/share/fonts`, so I mapped the host's _local_ user fonts (`.local/share/fonts`) to `/usr/share/fonts` in the container-- that way my user fonts will be seen there instead of the container system fonts.
 
@@ -318,11 +371,13 @@ To add a local font to your host's account, just download the `.ttf` from somewh
 
 (You can also set the location where fonts are looked for via Fusion Settings in the Fusion menu.)
 
-### Can I put this repository folder somewhere other than `~/containers/resolve`?
+## Can I put this repository folder somewhere other than `~/containers/resolve`?
 
 It should still work if you put this "resolve" repo in any directory, but in any case, the defaults are configurable.
 
-### Configurable how?
+# Configuration
+
+## The RESOLVE_ environment variables
 
 You can put your mounts in one place, your zip in another, and this repository in yet another!
 
@@ -355,9 +410,9 @@ In this case, two additional `--bind` arguments will be automatically generated 
 
 * `RESOLVE_RC_PATH` -- A path to a configuration/auto-run script.  See explanation below.
 
-### Making these configurations stick around
+## Making these configurations stick around
 
-#### Use a `resolve.rc` file to set configurations and run any "pre-flight" commands
+### Use a `resolve.rc` file to set configurations and run any "pre-flight" commands
 
 * `RESOLVE_RC_PATH` -- using this single environment variable, you can direct `./resolve.sh` and `build.sh` to run a configuration file, say `resolve.rc`,  every time before starting Resolve.  This is perfect for setting all the environment variables together in one place, which can be anywhere you want.
 
@@ -379,7 +434,7 @@ So just create a new file `resolve.rc`.  It might look like this
 
 With all your configurations gathered together in one file, you now only need to set one environment variable, `RESOLVE_RC_PATH`, using any of the methods below:
 
-#### At run time in the command itself
+### At run time in the command itself
 
 Environment variables can be set at the time you run the command, like:
 
@@ -393,7 +448,7 @@ or if you use `resolve.rc`, simply do
 
      RESOLVE_RC_PATH=./resolve.rc ./resolve.sh
 
-#### Hand-entered in a local shell environment
+### Hand-entered in a local shell environment
 
 You can also set these in advance:
 
@@ -401,25 +456,25 @@ You can also set these in advance:
 
 Then when you `./build.sh` the next time (at least in this [shell](https://en.wikipedia.org/wiki/Shell_(computing))), it will remember the RESOLVE_ZIP.
  
-####  Set via .bashrc or .zshrc autorun files
+###  Set via .bashrc or .zshrc autorun files
 
 As mentioned, you can make this more permanent by assigning these environment variable to your `~/.bashrc`, `~/.zshrc`, or whatever autoruns when you start a new shell.
 
-### What's next?
+# What's next?
 
 There's [a console-based external scripting API](https://forum.blackmagicdesign.com/viewtopic.php?f=21&t=99270), see also [here](https://deric.github.io/DaVinciResolve-API-Docs/), [here](https://diop.github.io/davinci-resolve-api/#/), and [here](https://timlehr.com/python-scripting-in-davinci-resolve/), which can [automate](https://github.com/deric/DaVinciResolve-API-Docs/blob/main/examples/python/3_grade_and_render_all_timelines.py) DaVinci Resolve Studio.  It has been [contemplated](https://forum.blackmagicdesign.com/viewtopic.php?f=21&t=140624), but not AFAIK really explored, how containerized, easily-deployable scripted DaVinci Resolve may be useful, especially for distributed rendering and such.
 
 Apparently, the [$300 Studio version is required for this](https://forum.blackmagicdesign.com/viewtopic.php?f=21&t=77764#wrapper), so someone with multiple licenses, perhaps, can explore further.
 
-### Thanks.
+# Thanks.
 
 Hope this is helpful to someone.  If so, and you want to give back, consider smashing that like button.. oh wait this is text.  Okay, how about making a US tax-deductable donation to the [Electronic Frontier Foundation](https://www.eff.org)?
 
-### Last thought-- buy this thing!
+# Last thought-- buy this thing!
 
 Based on my very limited experience using DaVinci Resolve, it is EXCELLENT and the community around it and the tutorials I found around, etc are top-notch.  Shout out to [Casey Faris](https://twitter.com/caseyinhd), especially, [on YouTube](https://www.youtube.com/user/CaseyFaris777/videos).  So I do recommend if you enjoy using Resolve, purchase the full "Studio" version, which you can get with the Speed Editor thing.  It really appears to be worth the $300 US.  (And no, no one is paying me to say that.)  Great job, DaVinci/Blackmagic Design!
 
-### Disclaimer
+# Disclaimer
 
 THIS CONTAINER-RELATED SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
