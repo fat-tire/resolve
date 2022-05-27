@@ -1,0 +1,10 @@
+# Blackmagic Design hardware udev rules
+# Put in /etc/udev/rules.d/70-blackmagic-design.rules
+
+# BMD hardware (such as Speed Editor)
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1edb", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="1edb", MODE="0660", GROUP="plugdev"
+
+# DaVinci Resolve Studio dongle
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="096e", ATTRS{idProduct}=="0201", TAG+="uaccess"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="096e", ATTRS{idProduct}=="0201", MODE="0660", GROUP="plugdev"

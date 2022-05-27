@@ -78,9 +78,11 @@ The default startup script `resolve.sh` also maps `/dev/bus/usb` from the host t
 
 If you use Registration Codes instead, there's information below about trying to use them, including the need to enable Internet access to your container (I've turned off Internet access by default).  **Please read the warning about how this is completely untested and you must proceed entirely at your own risk.**
 
-## Speed editor and other dedicated hardware
+## Speed editor and other USB hardware
 
 I also set up the `resolve.sh` startup script to bind mount all the [HID](https://en.wikipedia.org/wiki/Human_interface_device) `/dev/hidraw#` device files to allow the speed editor hardware and I assume other keyboards and input devices to work.  At least it did for me.
+
+On most Linux systems, you'll need to grant special access to the USB devices, so adding a `70-blackmagic-design.rules` [udev](https://www.freedesktop.org/software/systemd/man/udev.html) file is a good idea.  One is provided in this repository.  Just copy this file to `/etc/udev/rules.d/` or wherever udev rule files should be put on your Linux distribution.
 
 Will this work with other specialized editing/camera/etc hardware?  Not sure!
 
