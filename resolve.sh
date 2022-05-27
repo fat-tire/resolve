@@ -135,14 +135,20 @@ do
 	DEV=`udevadm info -q property ${f}`
 	if [[ "${DEV}" == *":1EDB:"* ]]; then
            case "${DEV}" in
-             *"1EDB:DA0E"* ) PROD="Speed Editor";;
              *"1EDB:BD3B"* ) PROD="Intensity Shuttle";;
+             *"1EDB:BD43"* ) PROD="H.264 Pro Recorder";;
              *"1EDB:BD46"* ) PROD="Mini Converter Analog to SDI";;
-             *"1EDB:BD75"* ) PROD="2.5K Cinema Camera (BMCC)";;
-             *"1EDB:BD48"* ) PROD="ATEM M/E Production Switcher";;
-             *"1EDB:BE49"* ) PROD="ATEM Mini";;
+             *"1EDB:BD48"* ) PROD="ATEM 1 M/E Production Switcher";;
+             *"1EDB:BD6E"* ) PROD="ATEM Production Studio 4K";;
              *"1EDB:BD4f"* ) PROD="UltraStudio SDI";;
+             *"1EDB:BD75"* ) PROD="2.5K Cinema Camera (BMCC)";;
+             *"1EDB:BE16"* ) PROD="Pocket 4k Camera";;
+             *"1EDB:BE49"* ) PROD="ATEM Mini";;
              *"1EDB:BE55"* ) PROD="ATEM Mini Pro XML";;
+             *"1EDB:DA07"* ) PROD="Micro Panel";;
+             *"1EDB:DA0A"* ) PROD="Mini Panel";;
+             *"1EDB:DA0B"* ) PROD="Editing Keyboard";;
+             *"1EDB:DA0E"* ) PROD="Speed Editor";;
              * ) PROD="Unknown";;
            esac
            echo "Granting access to BlackMagic Design hardware (${PROD}) on" ${f}
