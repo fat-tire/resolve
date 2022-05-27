@@ -122,8 +122,8 @@ echo "  /var/BlackmagicDesign/DaVinci Resolve -> ${RESOLVE_MOUNTS_PATH}/${RESOLV
 echo "  /opt/resolve/Media                    -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA}"
 
 if [[ "${SRC_CNT}" -ne "0" ]]; then
-  echo "Extra custom ${SRC_CNT} mount(s):"
-  echo "  " "${MOUNT_EXTRAS[@]}"
+  echo "${SRC_CNT} extra custom mount(s):"
+  echo " ${MOUNT_EXTRAS[@]}"
 fi
 
 # Detect Speed Editor, mount HID raw device, and set cgroup rule
@@ -148,22 +148,19 @@ do
            echo "Granting access to BlackMagic Design hardware (${PROD}) on" ${f}
            eval "${DEV}" # udevadm's output looks like variables
            # note that "eval" could be dangerous if ${DEV} somehow contains something nefarious
-           MOUNTS_HIDRAW+="--mount type=bind,source=${f},target=${f} "
-           CGROUP_RULE+="--device-cgroup-rule"="c ${MAJOR}:${MINOR} rwm "
+           MOUNTS_HIDRAW+=( --mount type=bind,source=${f},target=${f} )
+           CGROUP_RULE+=( --device-cgroup-rule="c ${MAJOR}:${MINOR} rwm" )
            break
-	else
-           CGROUP_RULE+="-e BLANK"="0"
 	fi
   else
     echo "Note:  udevadm must be installed to detect Blackmagic hardware at ${f}."
-    CGROUP_RULE+="-e BLANK"="0"
   fi
 done
 
 # enable host's system fonts (put it in $HOME/.local/share/fonts in container)
 
 if ! [ -z ${RESOLVE_ENABLE_HOST_SYSTEM_FONTS} ]; then
-   export MOUNT_SYSTEM_FONTS="--mount type=bind,source=/usr/share/fonts,target=/home/resolve/.local/share/fonts"
+   export MOUNT_SYSTEM_FONTS+=( --mount type=bind,source=/usr/share/fonts,target=/home/resolve/.local/share/fonts )
 fi
 
 # mint does not set XDG_RUNTIME_DIR, so set it if unset.
@@ -183,7 +180,7 @@ if [ -z "${XAUTHORITY}" ]; then
    echo "\$XAUTHORITY was not set.  Defaulting to ${XAUTHORITY}"
 fi
 
-${CONTAINER_TYPE} run -it \
+"${CONTAINER_TYPE}" run -it \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
      --env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
@@ -200,7 +197,6 @@ ${CONTAINER_TYPE} run -it \
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
-     "${CGROUP_RULE}" \
      --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
@@ -219,10 +215,11 @@ ${CONTAINER_TYPE} run -it \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR},target=/var/BlackmagicDesign \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_DATABASE},target=/opt/resolve/Resolve\ Disk\ Database \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA},target=/opt/resolve/Media \
-     ${MOUNT_SYSTEM_FONTS} \
-     ${MOUNTS_HIDRAW} \
+     "${CGROUP_RULE[@]}" \
+     "${MOUNT_SYSTEM_FONTS[@]}" \
+     "${MOUNTS_HIDRAW[@]}" \
      "${MOUNT_EXTRAS[@]}" \
-     ${NET_DRIVER} \
+     "${NET_DRIVER}" \
      ${CONTAINER_RUN_ARGS} \
      --rm \
      --name="resolve_container" \

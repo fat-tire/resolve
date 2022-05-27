@@ -17,12 +17,12 @@ if ! command -v podman &> /dev/null; then
    CONTAINER_TYPE="docker"
    CONTAINER_BUILD="docker build ."
    CONTAINER_EXISTS="docker images -q"
-   CONTAINER_RUN_ARGS="--env PODMANOPT=no --env PODMANGROUPS=no"
+   CONTAINER_RUN_ARGS=" --env PODMANOPT=no --env PODMANGROUPS=no"
 elif ! command -v docker &> /dev/null; then
    CONTAINER_TYPE="podman"
    CONTAINER_BUILD="buildah bud"
    CONTAINER_EXISTS="podman image exists"
-   CONTAINER_RUN_ARGS="--annotation run.oci.keep_original_groups=1 --userns=keep-id"
+   CONTAINER_RUN_ARGS=" --annotation run.oci.keep_original_groups=1 --userns=keep-id"
 else
    echo "You must install either podman or docker and try again."
    exit 1
