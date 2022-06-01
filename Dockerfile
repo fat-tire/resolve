@@ -11,7 +11,9 @@
 #     Switch to official CentOS Stream from quay.io
 #     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-FROM quay.io/centos/centos:stream
+ARG BASE_IMAGE=quay.io/centos/centos:stream
+
+FROM ${BASE_IMAGE}
 
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
@@ -29,7 +31,6 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
        && dnf update -y \
        && dnf install dnf-plugins-core -y \
-       && dnf config-manager --set-enabled powertools \
        && dnf install epel-release -y \
        && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib alsa-plugins-pulseaudio librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
        && dnf install libcurl-devel -y \

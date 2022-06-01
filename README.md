@@ -387,6 +387,8 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 * `RESOLVE_MOUNTS_PATH` -- Set this to a _directory_ where you want the `mounts` folder and its contents to be placed.  The default is right in the repository where `resolve.sh` is running.
 
+* `RESOLVE_BASE_CONTAINER_IMAGE` -- set this to something like "almalinux/8-base" to use a base image other than Centos Stream.  For now, don't use a very new OS such as "almalinux/9-base" that uses pipewire (rather than pulseaudio) as they require a different configuration and additional packages
+
 * `RESOLVE_TAG` -- You can also set the container tag when building _or_ running.  So if you set `RESOLVE_TAG="17.4.3-TESTING"` when building, you'll end up with an image named **resolve/17.4.3-TESTING**.  With `resolve.sh`, setting this variable will specify the tag you want to run.  The default container tag when building is the Resolve version (also tagged "latest").  The default tag for running is "latest".
 
 * `RESOLVE_LICENSE_AGREE` -- set to "Y" or "YES" if you've already previously agreed to the license and don't want to have to answer the question every time you `./build.sh`.

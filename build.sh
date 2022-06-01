@@ -51,6 +51,15 @@ if ! [[ "${RESOLVE_LICENSE_AGREE,,}" =~ ^(y|yes)$ ]]; then
        exit 0
     fi
 fi
+
+# allow user to override base container image for this build
+
+if [ ! -z "$RESOLVE_BASE_CONTAINER_IMAGE" ]; then
+   export BASE_IMAGE="${RESOLVE_BASE_CONTAINER_IMAGE}"
+else
+   export BASE_IMAGE="quay.io/centos/centos:stream"
+fi
+
 # allow user to override tag for this build
 
 if [ ! -z "$RESOLVE_TAG" ]; then
@@ -67,7 +76,7 @@ fi
 
 echo "Building the resolve:${TAG} image..."
 
-${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`arch` --build-arg ZIPNAME="${ZIPNAME}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}"
+${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`arch` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}"
 
 # remove any context link
 if [ -f "${CONTEXT_ZIP}" ]; then
