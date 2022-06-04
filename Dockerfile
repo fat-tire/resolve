@@ -42,6 +42,7 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --ui=none \
        && rm -f /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && rm -rf /var/cache/yum/* \
+       && dnf remove -y epel-release dnf-plugins-core libcurl-devel \
        && dnf clean all
 
 ARG USER=resolve
