@@ -196,6 +196,7 @@ fi
      --env QT_AUTO_SCREEN_SET_FACTOR=0 \
      --env QT_SCALE_FACTOR=2 \
      --env QT_FONT_DPI=96 \
+     --env XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} \
      --device /dev/dri \
      --device /dev/input \
      --device /dev/nvidia0 \
@@ -203,6 +204,7 @@ fi
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
+     --mount type=bind,source=${XDG_RUNTIME_DIR}/pipewire-0,target=${XDG_RUNTIME_DIR}/pipewire-0 \
      --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \

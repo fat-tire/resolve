@@ -32,7 +32,8 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && dnf update -y \
        && dnf install dnf-plugins-core -y \
        && dnf install epel-release -y \
-       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib alsa-plugins-pulseaudio librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
+       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 libXi libXtst procps dbus-x11 \
+          libSM libxcrypt-compat pipewire -y \
        && dnf install libcurl-devel -y \
        && curl https://us.download.nvidia.com/XFree86/Linux-${ARCH}/${NVIDIA_VERSION}/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run -o /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --ui=none \
