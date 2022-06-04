@@ -11,7 +11,7 @@
 #     Switch to official CentOS Stream from quay.io
 #     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-ARG BASE_IMAGE=quay.io/centos/centos:stream
+ARG BASE_IMAGE=quay.io/centos/centos:stream9
 
 FROM ${BASE_IMAGE}
 
