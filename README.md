@@ -399,6 +399,8 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 *  `RESOLVE_NETWORK` -- Set to "host" to use the host's Internet/network connectivity.  Other network driver options are described in the [Docker](https://docs.docker.com/network/) and [Podman](https://docs.podman.io/en/latest/markdown/podman-run.1.html) documentation.  The default is "none", meaning the container will not have network access.
 
+*  `RESOLVE_CONTAINER_ENGINE` -- Should you have *both* Podman and Docker installed in your host environment, Podman will always be used as your default.  To specify a specific container engine, set `RESOLVE_CONTAINER_ENGINE` to either `podman` or `docker`.
+
 * `RESOLVE_BIND_SOURCES` and `RESOLVE_BIND_TARGETS` -- Use these to add your own custom bindings from the host to the container.
 
 Say you want to map `/tmp/garbage` on your host to `/tmp` in the container.  You also want to map `/var/run/dbus/system_bus_socket` from the host to the container.  You can do this like this.
