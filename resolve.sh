@@ -186,7 +186,7 @@ if [ -z "${XAUTHORITY}" ]; then
    echo "\$XAUTHORITY was not set.  Defaulting to ${XAUTHORITY}"
 fi
 
-"${CONTAINER_TYPE}" run -it \
+"${CONTAINER_ENGINE}" run -it \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
      --env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
