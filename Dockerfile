@@ -32,7 +32,7 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && dnf update -y \
        && dnf install dnf-plugins-core -y \
        && dnf install epel-release -y \
-       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 libXi libXtst procps dbus-x11 libSM libxcrypt-compat pipewire libcurl-devel -y \
+       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 libXi libXtst procps dbus-x11 libSM libxcrypt-compat pipewire libcurl-devel compat-openssl11 -y \
        && curl http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
        && dnf -y remove pipewire-alsa \
        && rpm -i --nodeps --replacefiles /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
