@@ -52,8 +52,13 @@ RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-$USER
 
 COPY "${ZIPNAME}" /tmp/DaVinci_Resolve_Linux.zip
 
+# Note: for Arch & Manjaro distributions, we need to work around a potential AppImage "magic bytes" bug that may be in the run file
+# see https://github.com/fat-tire/resolve/issues/16
+
 RUN cd /tmp \
     && unzip *DaVinci_Resolve_Linux.zip \
+    && if [ "`od -An -j 8 -N 6 -x --endian=big *DaVinci_Resolve_*_Linux.run`" = " 4149 0200 0000" ]; then \
+            sed '0,/AI\x02/{s|AI\x02|\x00\x00\x00|}' -i *DaVinci_Resolve_*_Linux.run; fi \
     && ./*DaVinci_Resolve_*_Linux.run  --appimage-extract \
     && cd squashfs-root \
     && ./AppRun -i -a -y \
