@@ -203,7 +203,7 @@ fi
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
-     --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
+     --device /dev/bus/usb \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
      --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix \
