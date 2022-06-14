@@ -13,16 +13,16 @@ fi
 
 # determine if podman or docker installed
 
-if ! command -v podman &> /dev/null; then
-   CONTAINER_TYPE="docker"
-   CONTAINER_BUILD="docker build ."
-   CONTAINER_EXISTS="docker images -q"
-   CONTAINER_RUN_ARGS=" --env PODMANOPT=no --env PODMANGROUPS=no"
-elif ! command -v docker &> /dev/null; then
-   CONTAINER_TYPE="podman"
+if  [ -z "$(podman -v 2>&1 | grep -i 'not found')" ] && [ -z $(echo ${RESOLVE_CONTAINER_ENGINE} | grep -v -i podman) ]; then
+   CONTAINER_ENGINE="podman"
    CONTAINER_BUILD="buildah bud"
    CONTAINER_EXISTS="podman image exists"
    CONTAINER_RUN_ARGS=" --annotation run.oci.keep_original_groups=1 --userns=keep-id"
+elif  [ -z "$(docker -v 2>&1 | grep -i 'not found')" ] && [ -n "$(docker -v 2>&1 | grep -i 'version')" ] && [ -z $(echo ${RESOLVE_CONTAINER_ENGINE} | grep -v -i docker) ]; then
+   CONTAINER_ENGINE="docker"
+   CONTAINER_BUILD="docker build ."
+   CONTAINER_EXISTS="docker images -q"
+   CONTAINER_RUN_ARGS=" --env PODMANOPT=no --env PODMANGROUPS=no"
 else
    echo "You must install either podman or docker and try again."
    exit 1

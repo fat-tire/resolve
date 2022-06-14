@@ -186,7 +186,7 @@ if [ -z "${XAUTHORITY}" ]; then
    echo "\$XAUTHORITY was not set.  Defaulting to ${XAUTHORITY}"
 fi
 
-"${CONTAINER_TYPE}" run -it \
+"${CONTAINER_ENGINE}" run -it \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
      --env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
@@ -204,8 +204,8 @@ fi
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
+     --device /dev/bus/usb \
      --mount type=bind,source=${XDG_RUNTIME_DIR}/pipewire-0,target=${XDG_RUNTIME_DIR}/pipewire-0 \
-     --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
      --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix \
