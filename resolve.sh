@@ -65,6 +65,7 @@ mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_EASYDCP}
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_LICENSE}
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR}
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA}
+mkdir -p "${HOME}/.local/share/fonts"
 
 # Check for a machine-id file. If one doesn't exist, generate one derived from
 # the current host's machine-id if it exists (so it can be reproduced if needed).
@@ -106,6 +107,21 @@ if [ -z "${RESOLVE_NETWORK}" ]; then
    export NET_DRIVER="--network=none"
 else
    export NET_DRIVER="--network=${RESOLVE_NETWORK}"
+fi
+
+# look for cursor theme in standard locations and set up mount if it exists.
+
+if [ -f /usr/share/icons/default/index.theme ]; then
+      CURSOR_THEME=/usr/share/icons/default/index.theme
+   elif [ -f ${HOME}/.icons/default/index.theme ]; then
+           CURSOR_THEME=${HOME}/.icons/default/index.theme
+      elif [ -f /etc/alternatives/x-cursor-theme ]; then
+              CURSOR_THEME=/etc/alternatives/x-cursor-theme
+         else unset CURSOR_THEME
+fi
+
+if ! [ -z "${CURSOR_THEME}" ]; then
+   export MOUNT_CURSOR_THEME=( --mount type=bind,source=${CURSOR_THEME},target=/usr/share/icons/default/index.theme,readonly )
 fi
 
 echo "The network driver setting is          : ${NET_DRIVER}"
@@ -209,7 +225,6 @@ fi
      --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix \
      --mount type=bind,source=${XDG_RUNTIME_DIR}/pulse/native,target=${XDG_RUNTIME_DIR}/pulse/native \
      --mount type=bind,source=/usr/share/icons,target=/usr/share/icons,readonly \
-     --mount type=bind,source=/etc/alternatives/x-cursor-theme,target=/usr/share/icons/default/index.theme,readonly \
      --mount type=bind,source=${HOME}/.config/pulse/cookie,target=/run/pulse/cookie \
      --mount type=bind,source=${HOME}/.local/share/fonts,target=/usr/share/fonts,readonly \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${MOUNTS_DIRNAME}/container-machine-id,target=/etc/machine-id \
@@ -221,6 +236,7 @@ fi
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR},target=/var/BlackmagicDesign \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_DATABASE},target=/opt/resolve/Resolve\ Disk\ Database \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA},target=/opt/resolve/Media \
+     "${MOUNT_CURSOR_THEME[@]}" \
      "${CGROUP_RULE[@]}" \
      "${MOUNT_SYSTEM_FONTS[@]}" \
      "${MOUNTS_HIDRAW[@]}" \
