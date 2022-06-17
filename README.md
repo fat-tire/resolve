@@ -342,7 +342,7 @@ Now, in the container, do the installation--
       mkdir /home/resolve/tmp  # the installer needs a big temporary directory
       TMPDIR=/home/resolve/tmp ./Blackmagic_Fairlight_Sound_Library_Linux.run
 
-This should start up the installer.  Agree to the license and choose the destination for the library.  The default puts it in `/home/resolve/Movies`.  (On your host device, this will translate to `mounts/resolve-home/Movies`)
+This should start up the installer.  Agree to the license(s) and choose the destination for the library.  The default puts it in `/home/resolve/Movies`.  (On your host device, this will translate to `mounts/resolve-home/Movies`)
 
 Be sure to run DaVinci Resolve to make sure the install was a success:
 
@@ -391,7 +391,7 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 * `RESOLVE_TAG` -- You can also set the container tag when building _or_ running.  So if you set `RESOLVE_TAG="17.4.3-TESTING"` when building, you'll end up with an image named **resolve/17.4.3-TESTING**.  With `resolve.sh`, setting this variable will specify the tag you want to run.  The default container tag when building is the Resolve version (also tagged "latest").  The default tag for running is "latest".
 
-* `RESOLVE_LICENSE_AGREE` -- set to "Y" or "YES" if you've already previously agreed to the license and don't want to have to answer the question every time you `./build.sh`.
+* `RESOLVE_LICENSE_AGREE` (or `RESOLVE_LICENSES_AGREE`) -- set to "Y" or "YES" if you've already previously agreed to the license(s) and don't want to have to answer the question every time you `./build.sh`.
 
 *  `RESOLVE_ENABLE_HOST_SYSTEM_FONTS` -- As mentioned above, you can set this to "YES" to include the host fonts at `/usr/share/fonts` to the container's `.local/share/fonts`.  Doing this however will significantly add many system fonts, many of which you probably won't need.
 
@@ -425,7 +425,7 @@ So just create a new file `resolve.rc`.  It might look like this
      # resolve.rc
      # This will be run every time I run resolve.sh or build.sh!
      
-     RESOLVE_LICENSE_AGREE="Y"
+     RESOLVE_LICENSES_AGREE="Y"
      RESOLVE_NETWORK="host"
      RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip
      RESOLVE_BIND_SOURCES=("/tmp" "/var/run/dbus/system_bus_socket")
@@ -442,7 +442,7 @@ With all your configurations gathered together in one file, you now only need to
 
 Environment variables can be set at the time you run the command, like:
 
-     RESOLVE_TAG="MyTest" RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip RESOLVE_LICENSE_AGREE="YES" RESOLVE_MOUNTS_PATH="/mnt/myContainers/resolve" ./build.sh
+     RESOLVE_TAG="MyTest" RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip RESOLVE_LICENSES_AGREE="YES" RESOLVE_MOUNTS_PATH="/mnt/myContainers/resolve" ./build.sh
      
 or
      

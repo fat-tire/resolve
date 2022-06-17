@@ -40,11 +40,14 @@ export REGEX='.*[Resolve|Studio]_([0-9|\.|b]+)_Linux.zip'
 
 export VER=${BASH_REMATCH[1]}
 
-if ! [[ "${RESOLVE_LICENSE_AGREE,,}" =~ ^(y|yes)$ ]]; then
+if ! [[ "${RESOLVE_LICENSE_AGREE,,}" =~ ^(y|yes)$ || "${RESOLVE_LICENSES_AGREE,,}" =~ ^(y|yes)$ ]]; then
     echo "During this build process, Blackmagic Design Pty. Ltd.'s License"
     echo "Agreement for DaVinci Resolve [Studio] (${VER}) will be extracted from"
     echo "the zip file and displayed. You must carefully read the License Agreement"
     echo "and agree to its terms and conditions before using DaVinci Resolve."
+    echo "Similarly, some versions of NVIDIA's drivers also require acceptance of"
+    echo "a license, which is available at nvidia.com. You must review any applicable"
+    echo "license and agree to its terms and conditions before using the NVIDIA driver."
     read -r -p "Do you agree to the above [y/N] " agree
     if ! [[ "${agree,,}" =~ ^(y|yes)$ ]]; then
        echo "You must agree to continue.  Exiting."
