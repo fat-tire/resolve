@@ -230,13 +230,9 @@ Try holding down the **Super** key (which often has a Windows logo).  You should
 
 ## The windows are way too small (or too large)!
 
-Play with these lines in `resolve.sh` to adjust how big Resolve appears on your screen:
+Add this line to `resolve.sh` and adjust the value (try 1, 2, 1.5, etc.) to adjust how big Resolve appears on your screen:
 
-     --env GDK_SCALE=2 \
-     --env GDK_DPI_SCALE=0.5 \
-     --env QT_AUTO_SCREEN_SET_FACTOR=0 \
      --env QT_SCALE_FACTOR=2 \
-     --env QT_FONT_DPI=96 \
 
 ## Why doesn't drag and drop work from the host?
 
