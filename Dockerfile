@@ -39,7 +39,7 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && PINNEDSHA=`/usr/bin/sha256sum /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm` \
        && if [ "${PINNEDSHA}" != "a870db3bceeeba7f96a9f04265b8c8359629f0bb3066e68464e399d88001ae52  /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm" ]; then echo "bad checksum" ; exit 1; fi \
        && curl https://us.download.nvidia.com/XFree86/Linux-${ARCH}/${NVIDIA_VERSION}/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run -o /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
-       && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --ui=none \
+       && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --accept-license --ui=none \
        && rm -f /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && rm -rf /var/cache/yum/* \
        && dnf remove -y epel-release dnf-plugins-core libcurl-devel \
