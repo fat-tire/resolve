@@ -208,6 +208,7 @@ fi
      --env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
      --env PULSE_COOKIE=/run/pulse/cookie \
      --env QT_AUTO_SCREEN_SCALE_FACTOR=1 \
+     --env XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} \
      --device /dev/dri \
      --device /dev/input \
      --device /dev/nvidia0 \
