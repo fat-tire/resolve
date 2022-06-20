@@ -71,6 +71,12 @@ else
    export TAG=${VER}
 fi
 
+if [ ! -z "$RESOLVE_USER_ID" ]; then
+   export USER_ID="${RESOLVE_USER_ID}"
+else
+   export USER_ID=`id -u`
+fi
+
 if [ -z "$RESOLVE_NVIDIA_VERSION" ]; then
    export NVIDIA_VERSION=`nvidia-smi --query-gpu=driver_version --format=csv,noheader`
 else
@@ -79,7 +85,7 @@ fi
 
 echo "Building the resolve:${TAG} image..."
 
-${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`uname -m` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}"
+${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`uname -m` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}" --build-arg USER_ID="${USER_ID}"
 
 # remove any context link
 if [ -f "${CONTEXT_ZIP}" ]; then
