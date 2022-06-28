@@ -46,8 +46,9 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && dnf clean all
 
 ARG USER=resolve
+ARG USER_ID=1000
 
-RUN useradd -u 1000 -U --create-home -r $USER && echo "$USER:$USER" | chpasswd && usermod -aG wheel $USER
+RUN useradd -u "${USER_ID}" -U --create-home -r $USER && echo "$USER:$USER" | chpasswd && usermod -aG wheel $USER
 
 # To disallow the resolve user to do things as root, comment out this line
 RUN echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/90-$USER

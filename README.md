@@ -397,6 +397,8 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 *  `RESOLVE_CONTAINER_ENGINE` -- Should you have *both* Podman and Docker installed in your host environment, Podman will always be used as your default.  To specify a specific container engine, set `RESOLVE_CONTAINER_ENGINE` to either `podman` or `docker`.
 
+*  `RESOLVE_USER_ID` -- Set this to the desired user ID ("UID") of the user (who is named "resolve", remember) running within the container. By default, "resolve"'s UID is set to match the UID of the user who runs the `./build.sh` command. However, it is possible that you will build the container with one account and run it with another, and Docker in particular may prefer that the host user UID and the "resolve" container user's UID match.  So, if you are having issues with file permissions or file ownership on mounted volumes, try adjusting this variable. 
+
 * `RESOLVE_BIND_SOURCES` and `RESOLVE_BIND_TARGETS` -- Use these to add your own custom bindings from the host to the container.
 
 Say you want to map `/tmp/garbage` on your host to `/tmp` in the container.  You also want to map `/var/run/dbus/system_bus_socket` from the host to the container.  You can do this like this.
