@@ -55,12 +55,25 @@ if ! [[ "${RESOLVE_LICENSE_AGREE,,}" =~ ^(y|yes)$ || "${RESOLVE_LICENSES_AGREE,,
     fi
 fi
 
+# if RESOLVE_NO_PIPEWIRE set, use that.  Otherwise check.
+
+if [ ! -z "${RESOLVE_NO_PIPEWIRE}" ]; then
+   export NO_PIPEWIRE=1
+elif `pgrep pipewire &>/dev/null` ; then
+   export NO_PIPEWIRE=0
+else
+   export NO_PIPEWIRE=1
+fi
+
 # allow user to override base container image for this build
+# otherwise pick a default based on whether pipewire is chosen
 
 if [ ! -z "$RESOLVE_BASE_CONTAINER_IMAGE" ]; then
    export BASE_IMAGE="${RESOLVE_BASE_CONTAINER_IMAGE}"
+elif [[ "${NO_PIPEWIRE}" == 1 ]]; then
+   export BASE_IMAGE="quay.io/centos/centos:stream8"
 else
-   export BASE_IMAGE="quay.io/centos/centos:stream"
+   export BASE_IMAGE="quay.io/centos/centos:stream9"
 fi
 
 # allow user to override tag for this build
@@ -85,7 +98,7 @@ fi
 
 echo "Building the resolve:${TAG} image..."
 
-${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`uname -m` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}" --build-arg USER_ID="${USER_ID}"
+${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`uname -m` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}" --build-arg USER_ID="${USER_ID}" --build-arg NO_PIPEWIRE="${NO_PIPEWIRE}"
 
 # remove any context link
 if [ -f "${CONTEXT_ZIP}" ]; then
