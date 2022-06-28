@@ -18,7 +18,7 @@ FROM ${BASE_IMAGE}
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
 ARG ARCH=x86_64
-ARG NVIDIA_VERSION=510.47
+ARG NVIDIA_VERSION=510.73
 ARG ZIPNAME
 
 # get x11 + nvidia + sound + other dependency stuff set up the machine ID
