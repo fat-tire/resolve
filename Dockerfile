@@ -32,7 +32,6 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
        && dnf update -y \
        && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
-       && echo "nopw - ${NO_PIPEWIRE}" \
        && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
              dnf install libXi libXtst procps dbus-x11 libSM libxcrypt-compat pipewire libcurl-devel compat-openssl11 -y \
              && curl http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
