@@ -95,7 +95,7 @@ Both Podman and Docker are available in most Linux distributions and can be inst
 
 Sure, why not.  If you have Podman running and prefer that, great.  Or use Docker.  Whatever.
 
-So here's the plan on building the image-- we'll start with the official CentOS 8 Stream, then update the packages and add some dependencies needed for DaVinci Resolve.  Y'know, drivers and libraries and stuff.  Then install DaVinci Resolve from the official zip file you can get from the website.  Then create a user called "resolve" in the CentOS container.  That's the user who will run resolve in CentOS.
+So here's the plan on building the image-- we'll start with the official CentOS Stream, then update the packages and add some dependencies needed for DaVinci Resolve.  Y'know, drivers and libraries and stuff.  Then install DaVinci Resolve from the official zip file you can get from the website.  Then create a user called "resolve" in the CentOS container.  That's the user who will run resolve in CentOS.
 
 ## Wait- a user named "resolve" will run Resolve?  But _I_ want to run it!  How will I access the projects and stuff?
 
@@ -175,7 +175,7 @@ On most Linux systems, you'll need to grant special access to the USB devices, s
 
      **NOTE:  Part of this building/installation process includes agreeing to certain terms and conditions from the makers of DaVinci Resolve [Studio].  Please be sure to review these terms and agree to them before using DaVince Resolve [Studio].  You will be asked to agree when running `./build.sh`.**
 
-7.  Now wait.  The **CentOS 8 Stream** system should be downloaded, updated, dependencies added, the DaVinci Resolve.zip copied in there and everything hopefully will be installed.
+7.  Now wait.  The **CentOS Stream** system should be downloaded, updated, dependencies added, the DaVinci Resolve.zip copied in there and everything hopefully will be installed.
 
     Assuming no errors occur, you're (fingers-crossed) ready to run DaVinci Resolve [Studio] now.
     
@@ -383,7 +383,9 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 * `RESOLVE_MOUNTS_PATH` -- Set this to a _directory_ where you want the `mounts` folder and its contents to be placed.  The default is right in the repository where `resolve.sh` is running.
 
-* `RESOLVE_BASE_CONTAINER_IMAGE` -- set this to something like "almalinux/8-base" to use a base image other than Centos Stream.  For now, don't use a very new OS such as "almalinux/9-base" that uses pipewire (rather than pulseaudio) as they require a different configuration and additional packages
+* `RESOLVE_BASE_CONTAINER_IMAGE` -- Set this to something like "almalinux/8-base" or "almalinux/9-base" to use a container image other than the Centos Stream 8/9 default.  See `RESOLVE_NO_PIPEWIRE` below to specify if you do not have <a href="https://pipewire.org/">pipewire</a> installed on your host, though the build system will try to auto-detect this.
+
+* `RESOLVE_NO_PIPEWIRE` -- Set this to 1 to tell the build system when you (1) do not have <a href="https://pipewire.org/">pipewire</a> (instead of, say, <a href="https://www.freedesktop.org/wiki/Software/PulseAudio/">Pulseaudio</a>) running on your host or if you are installing a container image that does not easily support Pipewire (such as an image descended from CentOS Stream 8 or earlier).  Set to 0 for a container image that uses Pipewire.  By default, the build system will try to detect a Pipewire-running host (and will consequently default to the CentOS Stream 9 container image), but should falls back to CentOS Stream 8 if Pipewire is not detected.  If you manually override `RESOLVE_BASE_CONTAINER_IMAGE` above, you may need to set `RESOLVE_NO_PIPEWIRE` too, depending on which base container you use.  Ubuntu defaults to using Pipewire starting with 22.10 "Kinetic Kudu", but older Ubuntu can also <a href="https://linuxconfig.org/how-to-install-pipewire-on-ubuntu-linux">install it manually</a>.
 
 * `RESOLVE_TAG` -- You can also set the container tag when building _or_ running.  So if you set `RESOLVE_TAG="17.4.3-TESTING"` when building, you'll end up with an image named **resolve/17.4.3-TESTING**.  With `resolve.sh`, setting this variable will specify the tag you want to run.  The default container tag when building is the Resolve version (also tagged "latest").  The default tag for running is "latest".
 

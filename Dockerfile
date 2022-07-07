@@ -11,14 +11,15 @@
 #     Switch to official CentOS Stream from quay.io
 #     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-ARG BASE_IMAGE=quay.io/centos/centos:stream
+ARG BASE_IMAGE=quay.io/centos/centos:stream9
 
 FROM ${BASE_IMAGE}
 
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
 ARG ARCH=x86_64
-ARG NVIDIA_VERSION=510.47
+ARG NVIDIA_VERSION=510.73
+ARG NO_PIPEWIRE=0
 ARG ZIPNAME
 
 # get x11 + nvidia + sound + other dependency stuff set up the machine ID
@@ -30,15 +31,23 @@ ARG ZIPNAME
 RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
        && dnf update -y \
-       && dnf install dnf-plugins-core -y \
-       && dnf install epel-release -y \
-       && dnf install xorg-x11-server-Xorg libXcursor unzip alsa-lib alsa-plugins-pulseaudio librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
-       && dnf install libcurl-devel -y \
+       && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
+       && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
+             dnf install libXi libXtst procps dbus-x11 libSM libxcrypt-compat pipewire libcurl-devel compat-openssl11 -y \
+             && curl http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
+             && dnf -y remove pipewire-alsa \
+             && rpm -i --nodeps --replacefiles /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
+             && PINNEDSHA=`/usr/bin/sha256sum /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm` \
+             && if [ "${PINNEDSHA}" != "a870db3bceeeba7f96a9f04265b8c8359629f0bb3066e68464e399d88001ae52  /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm" ]; then echo "bad checksum" ; exit 1; fi \
+          else \
+             dnf install epel-release -y \
+             && dnf install alsa-plugins-pulseaudio -y ; \
+          fi \
        && curl https://us.download.nvidia.com/XFree86/Linux-${ARCH}/${NVIDIA_VERSION}/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run -o /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --accept-license --ui=none \
        && rm -f /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && rm -rf /var/cache/yum/* \
-       && dnf remove -y epel-release dnf-plugins-core \ 
+       && dnf remove -y epel-release dnf-plugins-core libcurl-devel \
        && dnf clean all
 
 ARG USER=resolve
@@ -66,4 +75,4 @@ RUN cd /tmp \
     && cat /tmp/squashfs-root/docs/License.txt \
     && rm -rf /tmp/*.run /tmp/squashfs-root /tmp/*.zip /tmp/*.pdf
 
-CMD /opt/resolve/bin/resolve
+CMD __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only /opt/resolve/bin/resolve

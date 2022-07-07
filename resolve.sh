@@ -208,6 +208,7 @@ fi
      --env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
      --env PULSE_COOKIE=/run/pulse/cookie \
      --env QT_AUTO_SCREEN_SCALE_FACTOR=1 \
+     --env XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} \
      --device /dev/dri \
      --device /dev/input \
      --device /dev/nvidia0 \
@@ -216,6 +217,7 @@ fi
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
      --device /dev/bus/usb \
+     --mount type=bind,source=${XDG_RUNTIME_DIR}/pipewire-0,target=${XDG_RUNTIME_DIR}/pipewire-0 \
      --mount type=bind,source=$XAUTHORITY,target=/tmp/.host_Xauthority,readonly \
      --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
      --mount type=bind,source=/tmp/.X11-unix,target=/tmp/.X11-unix \
