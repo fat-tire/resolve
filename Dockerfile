@@ -39,6 +39,7 @@ RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
              && rpm -i --nodeps --replacefiles /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
              && PINNEDSHA=`/usr/bin/sha256sum /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm` \
              && if [ "${PINNEDSHA}" != "a870db3bceeeba7f96a9f04265b8c8359629f0bb3066e68464e399d88001ae52  /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm" ]; then echo "bad checksum" ; exit 1; fi \
+             && rm /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm ; \
           else \
              dnf install epel-release -y \
              && dnf install alsa-plugins-pulseaudio -y ; \
