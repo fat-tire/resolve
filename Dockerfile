@@ -21,6 +21,7 @@ ARG ARCH=x86_64
 ARG NVIDIA_VERSION=510.73
 ARG NO_PIPEWIRE=0
 ARG ZIPNAME
+ARG BUILD_X264_ENCODER_PLUGIN=0
 
 # get x11 + nvidia + sound + other dependency stuff set up the machine ID
 #     libcurl-devel added to support fusion reactor installer
@@ -75,5 +76,28 @@ RUN cd /tmp \
     && ./AppRun -i -a -y \
     && cat /tmp/squashfs-root/docs/License.txt \
     && rm -rf /tmp/*.run /tmp/squashfs-root /tmp/*.zip /tmp/*.pdf
+
+# build the x264 encoder plugin from source and move it in position
+
+COPY ./x264_plugin_patcher.sh /tmp/x264_plugin_patcher.sh
+
+RUN if [[ "${BUILD_X264_ENCODER_PLUGIN}" == 1 ]] ; then \
+       cd /tmp \
+       && sudo dnf -y install clang llvm zlib-devel git diffutils patch \
+       && sudo dnf -y --enablerepo=crb install nasm \
+       && git clone https://code.videolan.org/videolan/x264.git \
+       && cd x264 \
+       && ./configure --enable-shared \
+       && make \
+       && cp -R /opt/resolve/Developer/CodecPlugin/Examples/x264_encoder_plugin /tmp \
+       && cd .. \
+       && chmod a+x x264_plugin_patcher.sh \
+       && ./x264_plugin_patcher.sh \
+       && cd x264_encoder_plugin && make clean && make && make install \
+       && dnf remove -y clang llvm zlib-devel git diffutils patch nasm \
+       && rm -rf /var/cache/yum/* \
+       && dnf clean all ; \
+    fi \
+       && rm -rf /tmp/x264*
 
 CMD __NV_PRIME_RENDER_OFFLOAD=1 __GLX_VENDOR_LIBRARY_NAME=nvidia __VK_LAYER_NV_optimus=NVIDIA_only /opt/resolve/bin/resolve

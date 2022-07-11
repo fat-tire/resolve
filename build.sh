@@ -96,9 +96,16 @@ else
    export NVIDIA_VERSION="${RESOLVE_NVIDIA_VERSION}"
 fi
 
+# default to NOT building the plugin unless it's explicitly set.
+if [ ! -z "${RESOLVE_BUILD_X264_ENCODER_PLUGIN}" ]; then
+   export BUILD_X264_ENCODER_PLUGIN=1
+else
+   export BUILD_X264_ENCODER_PLUGIN=0
+fi
+
 echo "Building the resolve:${TAG} image..."
 
-${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`uname -m` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}" --build-arg USER_ID="${USER_ID}" --build-arg NO_PIPEWIRE="${NO_PIPEWIRE}"
+${CONTAINER_BUILD} -t "resolve:${TAG}" -t "resolve" --build-arg ARCH=`uname -m` --build-arg ZIPNAME="${ZIPNAME}" --build-arg BASE_IMAGE="${BASE_IMAGE}" --build-arg NVIDIA_VERSION="${NVIDIA_VERSION}" --build-arg USER_ID="${USER_ID}" --build-arg NO_PIPEWIRE="${NO_PIPEWIRE}" --build-arg BUILD_X264_ENCODER_PLUGIN="${BUILD_X264_ENCODER_PLUGIN}"
 
 # remove any context link
 if [ -f "${CONTEXT_ZIP}" ]; then
