@@ -387,6 +387,8 @@ Here are a few environment variables you can set when running `build.sh` and `re
 
 * `RESOLVE_NO_PIPEWIRE` -- Set this to 1 to tell the build system when you (1) do not have <a href="https://pipewire.org/">pipewire</a> (instead of, say, <a href="https://www.freedesktop.org/wiki/Software/PulseAudio/">Pulseaudio</a>) running on your host or if you are installing a container image that does not easily support Pipewire (such as an image descended from CentOS Stream 8 or earlier).  Set to 0 for a container image that uses Pipewire.  By default, the build system will try to detect a Pipewire-running host (and will consequently default to the CentOS Stream 9 container image), but should falls back to CentOS Stream 8 if Pipewire is not detected.  If you manually override `RESOLVE_BASE_CONTAINER_IMAGE` above, you may need to set `RESOLVE_NO_PIPEWIRE` too, depending on which base container you use.  Ubuntu defaults to using Pipewire starting with 22.10 "Kinetic Kudu", but older Ubuntu can also <a href="https://linuxconfig.org/how-to-install-pipewire-on-ubuntu-linux">install it manually</a>.
 
+* `RESOLVE_BUILD_X264_ENCODER_PLUGIN` -- Set this to 1 or "Y" to tell the build system to build an x264 encoder plug-in from source code.  The latest source code for the <a href="https://www.videolan.org/developers/x264.html">videolan x264 library</a> will be downloaded to the container and built.  Then sample Blackmagic plugin code will be used to create the plugin, which will automatically be installed into place (at `/opt/resolve/IOPlugins`), and then the build tools and source code are removed. As this is still experimental, the default is NOT to build this.  PLEASE NOTE THAT THE x264 CODEC LIBRARY SOURCE CODE IS LICENSED UNDER THE <a href="https://www.gnu.org/licenses/gpl-2.0.html">GNU GPL</a>, and, consequently, any binary x264 plugin you build via this repository may only be distributed in compliance with this license. Please read the terms of the GPL for details. Moreover, it is unclear which license Blackmagic uses for the example encoder plugin code as it relates to re-distribution of source or binaries.  (Is there a SDK-related license somewhere?)  The sample code used to create the plugin is provided directly by Blackmagic as part of the Resolve [Studio] installer and is located in the `/opt/resolve/Developer` directory.
+
 * `RESOLVE_TAG` -- You can also set the container tag when building _or_ running.  So if you set `RESOLVE_TAG="17.4.3-TESTING"` when building, you'll end up with an image named **resolve/17.4.3-TESTING**.  With `resolve.sh`, setting this variable will specify the tag you want to run.  The default container tag when building is the Resolve version (also tagged "latest").  The default tag for running is "latest".
 
 * `RESOLVE_LICENSE_AGREE` (or `RESOLVE_LICENSES_AGREE`) -- set to "Y" or "YES" if you've already previously agreed to the license(s) and don't want to have to answer the question every time you `./build.sh`.
@@ -424,7 +426,7 @@ So just create a new file `resolve.rc`.  It might look like this
 
      # resolve.rc
      # This will be run every time I run resolve.sh or build.sh!
-     
+
      RESOLVE_LICENSES_AGREE="Y"
      RESOLVE_NETWORK="host"
      RESOLVE_ZIP=/home/myaccount/Downloads/DaVinci_Resolve_Studio_17.4.3_Linux.zip
