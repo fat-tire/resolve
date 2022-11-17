@@ -209,6 +209,9 @@ fi
      --env PULSE_COOKIE=/run/pulse/cookie \
      --env QT_AUTO_SCREEN_SCALE_FACTOR=1 \
      --env XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR} \
+     --env RESOLVE_SCRIPT_LIB="/opt/resolve/libs/Fusion/fusionscript.so" \
+     --env RESOLVE_SCRIPT_API="/opt/resolve/Developer/Scripting" \
+     --env PYTHONPATH="/opt/resolve/Developer/Scripting/Modules/" \
      --device /dev/dri \
      --device /dev/input \
      --device /dev/nvidia0 \
