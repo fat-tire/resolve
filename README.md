@@ -40,7 +40,7 @@
   * [Making these configurations stick around](#making-these-configurations-stick-around)
     + [Use a `resolve.rc` file to set configurations and run any "pre-flight" commands](#use-a-resolverc-file-to-set-configurations-and-run-any-pre-flight-commands)
     + [At run time in the command itself](#at-run-time-in-the-command-itself)
-    + [In your desktop shortcut file](in-your-desktop-shortcut-file)
+    + [In your desktop shortcut file](#in-your-desktop-shortcut-file)
     + [Hand-entered in a local shell environment](#hand-entered-in-a-local-shell-environment)
     + [Set via .bashrc or .zshrc autorun files](#set-via-bashrc-or-zshrc-autorun-files)
 - [What's next?](#whats-next)
