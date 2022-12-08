@@ -40,6 +40,7 @@
   * [Making these configurations stick around](#making-these-configurations-stick-around)
     + [Use a `resolve.rc` file to set configurations and run any "pre-flight" commands](#use-a-resolverc-file-to-set-configurations-and-run-any-pre-flight-commands)
     + [At run time in the command itself](#at-run-time-in-the-command-itself)
+    + [In your desktop shortcut file](in-your-desktop-shortcut-file)
     + [Hand-entered in a local shell environment](#hand-entered-in-a-local-shell-environment)
     + [Set via .bashrc or .zshrc autorun files](#set-via-bashrc-or-zshrc-autorun-files)
 - [What's next?](#whats-next)
@@ -453,6 +454,16 @@ or
 or if you use `resolve.rc`, simply do
 
      RESOLVE_RC_PATH=./resolve.rc ./resolve.sh
+
+### In your desktop shortcut file
+
+Set environment variables such as `RESOLVE_RC_PATH` in your `~/.local/share/applications/resolve.desktop` shortcut file so it is used every time you launch the app with a click.  Just change this line:
+
+     Exec=bash -c "cd $HOME/containers/resolve && ./resolve.sh"
+
+to
+
+     Exec=bash -c "cd $HOME/container/resolve && env RESOLVE_RC_PATH=$HOME/container/resolve/resolve.rc ./resolve.sh"
 
 ### Hand-entered in a local shell environment
 
