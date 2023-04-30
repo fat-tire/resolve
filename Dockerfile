@@ -28,13 +28,18 @@ ARG BUILD_X264_ENCODER_PLUGIN=0
 #     see https://gitlab.com/WeSuckLess/Reactor/-/blob/master/Docs/Installing-Reactor.md#installing-reactor
 
 # Future: when bluetooth works with speed editor in Linux, add these packages:  bluez avahi dbus-x11 nss-mdns
-
-RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
+# EXTRA_PACKS are packages that may not be available but should be installed if they are.
+ARG EXTRA_PACKS=""
+RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTRA_PACKS="${EXTRA_PACKS} libxcrypt-compat" ; fi \
+       && if [[ `dnf list compat-openssl11` == *compat-openssl11* ]]; then export EXTRA_PACKS="${EXTRA_PACKS} compat-openssl11" ; fi \
+       && if [[ `dnf list compat-openssl10` == *compat-openssl10* ]]; then export EXTRA_PACKS="${EXTRA_PACKS} compat-openssl10"; fi \
+       && export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
        && dnf update -y \
        && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
+       && if [ ! -z "${EXTRA_PACKS}" ]; then dnf install ${EXTRA_PACKS} -y ; fi \
        && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
-             dnf install libXi libXtst procps dbus-x11 libSM libxcrypt-compat pipewire libcurl-devel compat-openssl11 \
+             dnf install libXi libXtst procps dbus-x11 libSM pipewire libcurl-devel \
                  apr apr-util libXinerama libxkbcommon libxkbcommon-x11 libXrandr xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm \
                  libglvnd-opengl pulseaudio-libs nss libXcomposite libXdamage -y \
              && curl http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
