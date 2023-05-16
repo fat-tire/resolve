@@ -11,7 +11,7 @@
 #     Switch to official CentOS Stream from quay.io
 #     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-ARG BASE_IMAGE=docker.io/rockylinux/8.6
+ARG BASE_IMAGE=docker.io/rockylinux:8.6
 
 FROM ${BASE_IMAGE}
 
