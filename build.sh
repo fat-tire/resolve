@@ -73,7 +73,7 @@ if [ ! -z "$RESOLVE_BASE_CONTAINER_IMAGE" ]; then
 elif [[ "${NO_PIPEWIRE}" == 1 ]]; then
    export BASE_IMAGE="quay.io/centos/centos:stream8"
 else
-   export BASE_IMAGE="docker.io/rockylinux/8.6"
+   export BASE_IMAGE="docker.io/rockylinux:8.6"
 fi
 
 # allow user to override tag for this build
