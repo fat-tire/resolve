@@ -92,7 +92,7 @@ ARG POWERTOOLS=powertools
 RUN if [[ "${BUILD_X264_ENCODER_PLUGIN}" == 1 ]] ; then \
        if [[ `dnf repolist --all` == *"crb"* ]]; then export POWERTOOLS=crb ; fi \
        && cd /tmp \
-       && sudo dnf -y install clang llvm zlib-devel git diffutils patch \
+       && sudo dnf -y install clang llvm zlib-devel git diffutils patch ed \
        && sudo dnf -y --enablerepo="${POWERTOOLS}" install nasm \
        && git clone https://code.videolan.org/videolan/x264.git \
        && cd x264 \
@@ -103,7 +103,7 @@ RUN if [[ "${BUILD_X264_ENCODER_PLUGIN}" == 1 ]] ; then \
        && chmod a+x x264_plugin_patcher.sh \
        && ./x264_plugin_patcher.sh \
        && cd x264_encoder_plugin && make clean && make && make install \
-       && dnf remove -y clang llvm zlib-devel git diffutils patch nasm \
+       && dnf remove -y clang llvm zlib-devel git diffutils patch nasm ed \
        && rm -rf /var/cache/yum/* \
        && dnf clean all ; \
     fi \
