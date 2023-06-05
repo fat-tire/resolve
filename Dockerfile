@@ -11,14 +11,14 @@
 #     Switch to official CentOS Stream from quay.io
 #     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
 
-ARG BASE_IMAGE=quay.io/centos/centos:stream9
+ARG BASE_IMAGE=docker.io/rockylinux:8.6
 
 FROM ${BASE_IMAGE}
 
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
 ARG ARCH=x86_64
-ARG NVIDIA_VERSION=510.73
+ARG NVIDIA_VERSION=525.105
 ARG NO_PIPEWIRE=0
 ARG ZIPNAME
 ARG BUILD_X264_ENCODER_PLUGIN=0
@@ -28,14 +28,20 @@ ARG BUILD_X264_ENCODER_PLUGIN=0
 #     see https://gitlab.com/WeSuckLess/Reactor/-/blob/master/Docs/Installing-Reactor.md#installing-reactor
 
 # Future: when bluetooth works with speed editor in Linux, add these packages:  bluez avahi dbus-x11 nss-mdns
-
-RUN    export NVIDIA_VERSION=$NVIDIA_VERSION \
+# EXTRA_PACKS are packages that may not be available but should be installed if they are.
+ARG EXTRA_PACKS=""
+RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTRA_PACKS="${EXTRA_PACKS} libxcrypt-compat" ; fi \
+       && if [[ `dnf list compat-openssl11` == *compat-openssl11* ]]; then export EXTRA_PACKS="${EXTRA_PACKS} compat-openssl11" ; fi \
+       && if [[ `dnf list compat-openssl10` == *compat-openssl10* ]]; then export EXTRA_PACKS="${EXTRA_PACKS} compat-openssl10"; fi \
+       && export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
-       && dnf update -y \
+       && dnf update --refresh -y \
        && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
+       && if [ ! -z "${EXTRA_PACKS}" ]; then dnf install ${EXTRA_PACKS} -y ; fi \
        && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
-             dnf install libXi libXtst procps dbus-x11 libSM libxcrypt-compat pipewire libcurl-devel compat-openssl11 \
-                 apr apr-util libXinerama libxkbcommon libxkbcommon-x11 libXrandr xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm -y \
+             dnf install libXi libXtst procps dbus-x11 libSM pipewire libcurl-devel \
+                 apr apr-util libXinerama libxkbcommon libxkbcommon-x11 libXrandr xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm \
+                 libglvnd-opengl pulseaudio-libs nss libXcomposite libXdamage -y \
              && curl http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
              && dnf -y remove pipewire-alsa \
              && rpm -i --nodeps --replacefiles /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
@@ -82,10 +88,12 @@ RUN cd /tmp \
 
 COPY ./x264_plugin_patcher.sh /tmp/x264_plugin_patcher.sh
 
+ARG POWERTOOLS=powertools
 RUN if [[ "${BUILD_X264_ENCODER_PLUGIN}" == 1 ]] ; then \
-       cd /tmp \
-       && sudo dnf -y install clang llvm zlib-devel git diffutils patch \
-       && sudo dnf -y --enablerepo=crb install nasm \
+       if [[ `dnf repolist --all` == *"crb"* ]]; then export POWERTOOLS=crb ; fi \
+       && cd /tmp \
+       && sudo dnf -y install clang llvm zlib-devel git diffutils patch ed \
+       && sudo dnf -y --enablerepo="${POWERTOOLS}" install nasm \
        && git clone https://code.videolan.org/videolan/x264.git \
        && cd x264 \
        && ./configure --enable-shared \
@@ -95,7 +103,7 @@ RUN if [[ "${BUILD_X264_ENCODER_PLUGIN}" == 1 ]] ; then \
        && chmod a+x x264_plugin_patcher.sh \
        && ./x264_plugin_patcher.sh \
        && cd x264_encoder_plugin && make clean && make && make install \
-       && dnf remove -y clang llvm zlib-devel git diffutils patch nasm \
+       && dnf remove -y clang llvm zlib-devel git diffutils patch nasm ed \
        && rm -rf /var/cache/yum/* \
        && dnf clean all ; \
     fi \
