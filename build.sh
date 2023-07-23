@@ -91,7 +91,7 @@ else
 fi
 
 if [ -z "$RESOLVE_NVIDIA_VERSION" ]; then
-   export NVIDIA_VERSION=`nvidia-smi --id-0 --query-gpu=driver_version --format=csv,noheader`
+   export NVIDIA_VERSION=`nvidia-smi --id=0 --query-gpu=driver_version --format=csv,noheader`
 else
    export NVIDIA_VERSION="${RESOLVE_NVIDIA_VERSION}"
 fi
