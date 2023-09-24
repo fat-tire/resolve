@@ -12,7 +12,7 @@ fi
 # is the nvidia-driver installed?
 
 if ! command -v nvidia-smi &> /dev/null; then
-   echo "Install the nvidia driver and try again."
+   echo "Nvidia-smi not found. If you know you're using the right drivers make sure you have nvidia-smi installed."
    exit 1
 fi
 
