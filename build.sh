@@ -10,14 +10,14 @@ if [ "$PWD" != "${REPO_DIR}" ]; then
 fi
 
 # is the nvidia-driver installed?
-if lsmod | grep "^nvidia\s" &> /dev/null; then
-   echo "Could not find the Nvidia drivers. Make sure you have them installed."
+if ! command lsmod | grep "^nvidia\s" &> /dev/null; then
+   echo "Could not find the NVIDIA drivers. Make sure you have them installed."
    exit 1
 fi
 
 # Is nvidia-smi installed?
 if ! command -v nvidia-smi &> /dev/null; then
-   echo "Nvidia-smi not found. You may have to install it from a seperate package."
+   echo "nvidia-smi not found. You may have to install it from a separate package."
    exit 1
 fi
 
