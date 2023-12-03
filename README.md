@@ -8,7 +8,7 @@
   * [So, to sum up-- what's the big advantage of using a container?](#so-to-sum-up---whats-the-big-advantage-of-using-a-container)
   * [Cool, cool.  I'm sold on at least trying this idea.  But which container system to use?  Linux has a few.](#cool-cool--im-sold-on-at-least-trying-this-idea--but-which-container-system-to-use--linux-has-a-few)
   * [Can't both Docker AND podman work?](#cant-both-docker-and-podman-work)
-  * [A user named "resolve" will run Resolve? But _I_ want to run it!  How will I access the projects and stuff?](#wait-a-user-named-resolve-will-run-resolve-but-i-want-to-run-it-how-will-i-access-the-projects-and-stuff)
+  * [Wait. A user named "resolve" will run Resolve? But _I_ want to run it!  How will I access the projects and stuff?](#wait-a-user-named-resolve-will-run-resolve-but-i-want-to-run-it-how-will-i-access-the-projects-and-stuff)
   * [Mapping directories (that is, bind-mounting folders) from CentOS to the host](#mapping-directories-that-is-bind-mounting-folders-from-centos-to-the-host)
   * [Sounds cool.](#sounds-cool)
   * [USB dongles & Registration Codes](#usb-dongles--registration-codes)
