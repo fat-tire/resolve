@@ -8,7 +8,7 @@
   * [So, to sum up-- what's the big advantage of using a container?](#so-to-sum-up---whats-the-big-advantage-of-using-a-container)
   * [Cool, cool.  I'm sold on at least trying this idea.  But which container system to use?  Linux has a few.](#cool-cool--im-sold-on-at-least-trying-this-idea--but-which-container-system-to-use--linux-has-a-few)
   * [Can't both Docker AND podman work?](#cant-both-docker-and-podman-work)
-  * [Wait- a user named "resolve" will run Resolve?  But _I_ want to run it!  How will I access the projects and stuff?](#wait-a-user-named-resolve-will-run-resolve-but-i-want-to-run-it-how-will-i-access-the-projects-and-stuff)
+  * [A user named "resolve" will run Resolve? But _I_ want to run it!  How will I access the projects and stuff?](#wait-a-user-named-resolve-will-run-resolve-but-i-want-to-run-it-how-will-i-access-the-projects-and-stuff)
   * [Mapping directories (that is, bind-mounting folders) from CentOS to the host](#mapping-directories-that-is-bind-mounting-folders-from-centos-to-the-host)
   * [Sounds cool.](#sounds-cool)
   * [USB dongles & Registration Codes](#usb-dongles--registration-codes)
@@ -24,7 +24,7 @@
   * [Why doesn't drag and drop work from the host?](#why-doesnt-drag-and-drop-work-from-the-host)
   * [Resolve doesn't have network access!](#resolve-doesnt-have-network-access)
   * [Can I use a registration code to activate Resolve Studio in the container?](#can-i-use-a-registration-code-to-activate-resolve-studio-in-the-container)
-  * [Does the speed editor work with a *bluetooth* connection rather than USB?](#does-the-speed-editor-work-with-a-bluetooth-connection-rather-than-usb)
+  * [Does the speed editor work with a *Bluetooth* connection rather than USB?](#does-the-speed-editor-work-with-a-bluetooth-connection-rather-than-usb)
   * [Can I update the speed editor's firmware with this container?](#can-i-update-the-speed-editors-firmware-with-this-container)
   * [What about using postgresql so multiple editors can connect to work on one project?](#what-about-using-postgresql-so-multiple-editors-can-connect-to-work-on-one-project)
   * [What version of the NVIDIA driver is the container using?](#what-version-of-the-nvidia-driver-is-the-container-using)
@@ -98,7 +98,7 @@ Sure, why not.  If you have Podman running and prefer that, great.  Or use Docke
 
 So here's the plan on building the image-- we'll start with the official CentOS Stream, then update the packages and add some dependencies needed for DaVinci Resolve.  Y'know, drivers and libraries and stuff.  Then install DaVinci Resolve from the official zip file you can get from the website.  Then create a user called "resolve" in the CentOS container.  That's the user who will run resolve in CentOS.
 
-## Wait- a user named "resolve" will run Resolve?  But _I_ want to run it!  How will I access the projects and stuff?
+## Wait. A user named "resolve" will run Resolve? But _I_ want to run it! How will I access the projects and stuff?
 
 No problem-- instead of saving data such as our projects and the media IN the Centos container, we'll save it in our host computer's folders instead. That we can easily interact with it, back it up, and treat it like any other data on the host.
 
@@ -267,9 +267,9 @@ Again, I have *no idea* if the `machine-id` is in any way used to identify your 
 
 Hope that's clear.  Post on reddit or something if you have thoughts on this as well as any code adjustments that are needed, which can be submitted as a pull request.
 
-## Does the speed editor work with a *bluetooth* connection rather than USB?
+## Does the speed editor work with a *Bluetooth* connection rather than USB?
 
-Not yet.  This seems to be an issue not with containers but with either the speed editor firmware or in DaVinci Resolve itself.  Wait for an update I guess.  Becuase it doesn't seem to work yet, this container does not yet install or configure the avahi, dbus, and bluez-hid2hci packages which it might need for future bluetooth support.
+Not yet.  This seems to be an issue not with containers but with either the speed editor firmware or in DaVinci Resolve itself.  Wait for an update I guess.  Becuase it doesn't seem to work yet, this container does not yet install or configure the avahi, dbus, and bluez-hid2hci packages which it might need for future Bluetooth support.
 
 ## Can I update the speed editor's firmware with this container?
 
