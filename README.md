@@ -141,7 +141,7 @@ Will this work with other specialized editing/camera/etc hardware?  Not sure!
  - A x86_64 PC (16GB or so.  Blackmagic Design says 32GB RAM minimum for Studio but whatever) with a fairly recent NVIDIA > 4GB GPU + a USB port (if using the Dongle).
  - Ubuntu/Debian/PopOS/Mint/RockyOS/?? installed on that computer (I'm using Ubuntu 22.04 LTS).  I have not yet tested on non-GNOME versions of Ubuntu (Xubuntu, Kubuntu, Lubuntu, etc.)
  - Optional:  A USB Dongle to enable the paid DaVinci Resolve Studio
- - Optional:  The DaVinci Resolve Speed Editor (USB only-- see below about BlueTooth operation)
+ - Optional:  The DaVinci Resolve Speed Editor (USB only-- see below about Bluetooth operation)
  - Optional:  A registration code-- but again **try this at your own risk/peril!**
 
 ## First add a udev rules file
