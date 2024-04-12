@@ -1,15 +1,12 @@
 #  A Dockerfile for DaVinci Resolve on Ubuntu w/rootless podman
 #
-#  Build a DaVinci Resolve image for Podman/Docker in Ubuntu 21.10 or so
+#  Build a DaVinci Resolve image for Podman/Docker
 #
 #  build this with:
 #          ./build.sh
 
 #-----------
-#  To build, we start with a recent version of Centos Stream
-#     12/31/21 CentOS 8 is EOL - https://forums.centos.org/viewtopic.php?f=54&t=78026
-#     Switch to official CentOS Stream from quay.io
-#     https://www.linux.org/threads/centos-announce-centos-stream-container-images-available-on-quay-io.33339/
+#  To build, we start with Rocky Linux
 
 ARG BASE_IMAGE=docker.io/rockylinux:8.6
 
