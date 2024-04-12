@@ -34,6 +34,7 @@ RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTR
        && export ARCH=$ARCH \
        && dnf update --refresh -y \
        && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
+       && dnf install epel-release -y && dnf install xcb-util-cursor -y \
        && if [ ! -z "${EXTRA_PACKS}" ]; then dnf install ${EXTRA_PACKS} -y ; fi \
        && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
              dnf install libXi libXt libXtst procps dbus-x11 libSM pipewire libcurl-devel \
@@ -46,8 +47,7 @@ RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTR
              && if [ "${PINNEDSHA}" != "a870db3bceeeba7f96a9f04265b8c8359629f0bb3066e68464e399d88001ae52  /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm" ]; then echo "bad checksum" ; exit 1; fi \
              && rm /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm ; \
           else \
-             dnf install epel-release -y \
-             && dnf install alsa-plugins-pulseaudio -y ; \
+             dnf install alsa-plugins-pulseaudio -y ; \
           fi \
        && curl https://us.download.nvidia.com/XFree86/Linux-${ARCH}/${NVIDIA_VERSION}/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run -o /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run \
        && bash /tmp/NVIDIA-Linux-${ARCH}-${NVIDIA_VERSION}.run --no-kernel-module --no-kernel-module-source --run-nvidia-xconfig --no-backup --no-questions --accept-license --ui=none \
@@ -55,6 +55,7 @@ RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTR
        && rm -rf /var/cache/yum/* \
        && dnf remove -y epel-release dnf-plugins-core libcurl-devel \
        && dnf clean all
+
 
 ARG USER=resolve
 ARG USER_ID=1000
