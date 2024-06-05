@@ -40,7 +40,7 @@ RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTR
              dnf install libXi libXt libXtst procps dbus-x11 libSM pipewire libcurl-devel \
                  apr apr-util libXinerama libxkbcommon libxkbcommon-x11 libXrandr xcb-util-image xcb-util-keysyms xcb-util-renderutil xcb-util-wm \
                  libglvnd-opengl pulseaudio-libs nss libXcomposite libXdamage -y \
-             && curl http://mirror.centos.org/centos/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
+             && curl https://vault.centos.org/8-stream/AppStream/x86_64/os/Packages/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm -o /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
              && dnf -y remove pipewire-alsa \
              && rpm -i --nodeps --replacefiles /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm \
              && PINNEDSHA=`/usr/bin/sha256sum /tmp/alsa-plugins-pulseaudio-1.1.9-1.el8.x86_64.rpm` \
