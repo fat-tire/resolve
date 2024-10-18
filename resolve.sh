@@ -196,6 +196,8 @@ fi
 if [ -z "${XAUTHORITY}" ]; then
    if [ -f "${HOME}/.Xauthority" ]; then
       export XAUTHORITY="${HOME}/.Xauthority"
+   elif [ "$XDG_SESSION_TYPE" = "wayland" ]; then
+      export XAUTHORITY="/dev/null"
    else
       export XAUTHORITY="/run/user/`id -u`/gdm/Xauthority"
    fi
