@@ -152,7 +152,7 @@ On most Linux systems, you'll need to grant special access to the USB devices, s
 
 1. On the Linux host, install the latest official proprietary NVIDIA drivers.  In Ubuntu, you can do this in the **Software & Updates** app, in the **Additional Drivers** tab.  Reboot and make sure everything works okay.  I have the computer running in "discrete" mode (set in the BIOS).  Not sure if this is needed.  Also, I am logged in using X11 (Xwindows) in the Desktop.  Not sure how well Wayland will work, although it theoretically *should* be compatible.  (You can switch your desktop from Wayland to X11 in Ubuntu's account login screen.)  Other versions of Linux may have their own method of installing the drivers, so time to [Google that](https://www.google.com/search?q=nvidia+how+to+install+drivers+linux)!
 
-2. Install the NVIDIA Container Toolkit using their [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). This is what allows you to build and run containers leveraging NVIDIA GPUs (it will work with either Podman or Docker)
+2. [OPTIONAL] Install the NVIDIA Container Toolkit using their [guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html). This is what allows you to build and run containers leveraging NVIDIA GPUs (it will work with either Podman or Docker)
 
 3. Install Podman [or Docker] and and other dependencies with this command (on distributions that support [apt](https://linuxize.com/post/how-to-use-apt-command/):
      
