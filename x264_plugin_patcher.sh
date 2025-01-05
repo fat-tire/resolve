@@ -13,12 +13,12 @@ ed x264_encoder_plugin/Makefile << ENDOFPATCH
 install:
 	mkdir -p \$(BUNDLE_DIR)/Contents/Linux-x86-64
 	cp bin/x264_encoder_plugin.dvcp \$(BUNDLE_DIR)/Contents/Linux-x86-64
-	sudo mkdir -p /opt/resolve/IOPlugins
-	sudo cp -r \$(BUNDLE_DIR) /opt/resolve/IOPlugins
+	mkdir -p /opt/resolve/IOPlugins
+	cp -r \$(BUNDLE_DIR) /opt/resolve/IOPlugins
 .
 44a
 	rm -rf \$(BUNDLE_DIR)
-	sudo rm -rf /opt/resolve/IOPlugins
+	rm -rf /opt/resolve/IOPlugins
 .
 19c
 # (need to install zlib1g-dev on debian or zlib-devel on centos)
