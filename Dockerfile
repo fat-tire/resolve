@@ -90,8 +90,8 @@ ARG POWERTOOLS=powertools
 RUN if [[ "${BUILD_X264_ENCODER_PLUGIN}" == 1 ]] ; then \
        if [[ `dnf repolist --all` == *"crb"* ]]; then export POWERTOOLS=crb ; fi \
        && cd /tmp \
-       && sudo dnf -y install clang llvm zlib-devel git diffutils patch ed \
-       && sudo dnf -y --enablerepo="${POWERTOOLS}" install nasm \
+       && dnf -y install clang llvm zlib-devel git diffutils patch ed \
+       && dnf -y --enablerepo="${POWERTOOLS}" install nasm \
        && git clone https://code.videolan.org/videolan/x264.git \
        && cd x264 \
        && ./configure --enable-shared \
