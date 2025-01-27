@@ -15,7 +15,11 @@ fi
 
 if  [ -z "$(podman -v 2>&1 | grep -i 'not found')" ] && [ -z $(echo ${RESOLVE_CONTAINER_ENGINE} | grep -v -i podman) ]; then
    CONTAINER_ENGINE="podman"
-   CONTAINER_BUILD="buildah bud"
+   if command -v buildah 2>&1 > /dev/null; then
+      CONTAINER_BUILD="buildah bud"
+   else
+      CONTAINER_BUILD="podman build ."
+   fi
    CONTAINER_EXISTS="podman image exists"
    CONTAINER_RUN_ARGS=" --annotation run.oci.keep_original_groups=1 --userns=keep-id"
 elif  [ -z "$(docker -v 2>&1 | grep -i 'not found')" ] && [ -n "$(docker -v 2>&1 | grep -i 'version')" ] && [ -z $(echo ${RESOLVE_CONTAINER_ENGINE} | grep -v -i docker) ]; then
