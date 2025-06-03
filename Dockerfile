@@ -79,7 +79,7 @@ RUN cd /tmp \
     && ./*DaVinci_Resolve_*_Linux.run  --appimage-extract \
     && cd squashfs-root \
     && ./AppRun -i -a -y \
-    && cat /tmp/squashfs-root/docs/License.txt \
+    && cat /tmp/squashfs-root/docs/License.* \
     && rm -rf /tmp/*.run /tmp/squashfs-root /tmp/*.zip /tmp/*.pdf
 
 # build the x264 encoder plugin from source and move it in position
