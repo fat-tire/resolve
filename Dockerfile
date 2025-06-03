@@ -34,7 +34,7 @@ RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTR
        && export ARCH=$ARCH \
        && dnf update --refresh -y \
        && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 -y \
-       && dnf install epel-release -y && dnf install xcb-util-cursor -y \
+       && dnf install epel-release -y && dnf install xcb-util-cursor libglvnd-devel -y \
        && if [ ! -z "${EXTRA_PACKS}" ]; then dnf install ${EXTRA_PACKS} -y ; fi \
        && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
              dnf install libXi libXt libXtst procps dbus-x11 libSM pipewire libcurl-devel \
