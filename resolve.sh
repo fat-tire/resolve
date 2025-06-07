@@ -260,7 +260,3 @@ set -x
      --ipc=host \
      --name="resolve_container" \
      resolve:${RESOLVE_TAG} "$@"
-
-# Removed lines
-#     --device /dev/nvidia0 \
-#     --device /dev/nvidiactl \
