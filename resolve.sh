@@ -213,7 +213,6 @@ fi
 set -x
 
 "${CONTAINER_ENGINE}" run -it \
-      --gpus all \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
      --env XAUTHORITY=/tmp/.host_Xauthority \
@@ -226,6 +225,8 @@ set -x
      --env PYTHONPATH="/opt/resolve/Developer/Scripting/Modules/" \
      --device /dev/dri \
      --device /dev/input \
+     --device /dev/nvidia0 \
+     --device /dev/nvidiactl \
      --device /dev/nvidia-modeset \
      --device /dev/nvidia-uvm \
      --device /dev/nvidia-uvm-tools \
@@ -249,6 +250,7 @@ set -x
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA},target=/opt/resolve/Media \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_FAIRLIGHT_DIR},target=/opt/resolve/Fairlight \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_EXTRAS_DIR},target=/opt/resolve/Extras \
+     --volume /media/$USER:/media/$USER \
      "${MOUNT_CURSOR_THEME[@]}" \
      "${CGROUP_RULE[@]}" \
      "${MOUNT_SYSTEM_FONTS[@]}" \
