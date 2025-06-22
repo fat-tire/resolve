@@ -213,7 +213,7 @@ fi
 set -x
 
 "${CONTAINER_ENGINE}" run -it \
-      --gpus all --privileged \
+      --gpus all \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
      --env XAUTHORITY=/tmp/.host_Xauthority \
@@ -257,6 +257,5 @@ set -x
      "${NET_DRIVER}" \
      ${CONTAINER_RUN_ARGS} \
      --rm \
-     --ipc=host \
      --name="resolve_container" \
      resolve:${RESOLVE_TAG} "$@"
