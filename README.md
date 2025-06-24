@@ -257,9 +257,17 @@ You can add that line to `.bashrc` (or `~/.zshrc`, etc.) or the `resolve.desktop
 
 ## Can I use a registration code to activate Resolve Studio in the container?
 
-**IMPORTANT NOTICE:  I HAVE NOT TESTED THE DAVINCI RESOLVE STUDIO REGISTRATION CODES-- ONLY THE DONGLES-- FROM INSIDE A CONTAINER.  I DO NOT KNOW HOW THE REGISTRATION CODES WORKS NOR HOW IT WILL HANDLE CONTAINERS.  TRY THIS ENTIRELY AT YOUR OWN RISK!  I AM NOT RESPONSIBLE FOR LOST/WASTED CODES!**
+Yes, you can, if you enable Internet access so Resolve can contact Blackmagic Design's servers:
 
-If you are using Resolve Studio with a registration code, I believe the container should need Internet access so Resolve can contact Blackmagic Design's servers.  I have not tested this functionality in any way, and there may be unforeseen consequences of using a registration code from within a container!
+     RESOLVE_NETWORK=host ./resolve.sh
+
+Your Studio license lets you install the program on two systems, and each container counts as a system.
+If you already have two activations, those will be deleted when you activate the third one, but if you then run DaVinci Resolve Studio on one of the previous systems, it will automatically re-activate.
+
+If you're experimenting with your container configuration, repeatedly creating new containers, you will encounter that situation frequently.
+It appears to always work properly, but the usual disclaimer applies: use at your own risk.
+Ideally you would be able to switch back and forth between multiple containers that share a license, so long as they're on the same computer, under the same account, but that doesn't work.
+It's unclear whether that could be made to work.
 
 For example-- one way a unique machine can be identified in Linux is by looking at the value of `/etc/machine-id`.  Your host has one `machine-id` value, but it seems weird to pass through the _same_ `machine-id` on a container.  So instead I made it so the CentOS container you create will derive its `machine-id` specifically from your host computer's `machine-id` if it exists (without being identical) and store this derived `machine-id` in your `mounts` directory (named appropriately enough, `container-machine-id`).  Using this _should_ make it so that running newly-built images with updated resolve versions would be consistent at least in terms of the `machine-id`.
 
@@ -323,9 +331,13 @@ From what I'm reading, you can even use `--mount` or --[volume](https://docs.doc
 
 ## How do I install the (royalty) free Blackmagic Sound Library?
 
-If you enable the Internet, you should be able to install it right in Resolve, in Fairlight.  However, if you want to download the zip and install it manually without the Internet enabled, here are steps that might work:
+The button in Fairlight to download the sound library launches your web browser to download the file.
+Unfortunately, the container does not have access to the host OS browser, so you have to obtain the file directly from [the Blackmagic Support Center website](https://www.blackmagicdesign.com/ca/support/).
+Search for "sound library" and you'll see "Blackmagic Fairlight Sound Library 1.0" (or newer, if they update it).
+That is the file you need to download.
 
-First, download the .zip fom Blackmagic Design.  Then, start up the container with a shell:
+Once you have downloaded the zip file, here are steps that might work.
+Start up the container with a shell:
 
      ./resolve.sh /bin/bash
 
