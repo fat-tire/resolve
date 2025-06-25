@@ -250,7 +250,6 @@ set -x
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA},target=/opt/resolve/Media \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_FAIRLIGHT_DIR},target=/opt/resolve/Fairlight \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_EXTRAS_DIR},target=/opt/resolve/Extras \
-     --volume /media/$USER:/media/$USER \
      "${MOUNT_CURSOR_THEME[@]}" \
      "${CGROUP_RULE[@]}" \
      "${MOUNT_SYSTEM_FONTS[@]}" \
