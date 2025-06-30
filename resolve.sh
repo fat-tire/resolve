@@ -55,6 +55,8 @@ export RESOLVE_EASYDCP=${MOUNTS_DIRNAME}/easyDCP
 export RESOLVE_LICENSE=${MOUNTS_DIRNAME}/license
 export RESOLVE_COMMON_DATA_DIR=${MOUNTS_DIRNAME}/BlackmagicDesign
 export RESOLVE_MEDIA=${MOUNTS_DIRNAME}/Media  # for raw footage (Ubuntu ~/Videos)
+export RESOLVE_FAIRLIGHT_DIR=${MOUNTS_DIRNAME}/Fairlight
+export RESOLVE_EXTRAS_DIR=${MOUNTS_DIRNAME}/Extras
 
 # make sure expected MOUNTS are here.
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_HOMEDIR}/.local/share/fonts
@@ -65,6 +67,8 @@ mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_EASYDCP}
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_LICENSE}
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR}
 mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA}
+mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_FAIRLIGHT_DIR}
+mkdir -p ${RESOLVE_MOUNTS_PATH}/${RESOLVE_EXTRAS_DIR}
 mkdir -p "${HOME}/.local/share/fonts"
 
 # Check for a machine-id file. If one doesn't exist, generate one derived from
@@ -136,6 +140,8 @@ echo "  /opt/resolve/.license                 -> ${RESOLVE_MOUNTS_PATH}/${RESOLV
 echo "  /opt/resolve/'Resolve Disk Database'  -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_DATABASE}"
 echo "  /var/BlackmagicDesign/DaVinci Resolve -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR}"
 echo "  /opt/resolve/Media                    -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA}"
+echo "  /opt/resolve/Fairlight                -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_FAIRLIGHT_DIR}"
+echo "  /opt/resolve/Extras                   -> ${RESOLVE_MOUNTS_PATH}/${RESOLVE_EXTRAS_DIR}"
 
 if [[ "${SRC_CNT}" -ne "0" ]]; then
   echo "${SRC_CNT} extra custom mount(s):"
@@ -204,9 +210,12 @@ if [ -z "${XAUTHORITY}" ]; then
    echo "\$XAUTHORITY was not set.  Defaulting to ${XAUTHORITY}"
 fi
 
+set -x
+
 "${CONTAINER_ENGINE}" run -it \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
+     --env XAUTHORITY=/tmp/.host_Xauthority \
      --env PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native \
      --env PULSE_COOKIE=/run/pulse/cookie \
      --env QT_AUTO_SCREEN_SCALE_FACTOR=1 \
@@ -239,6 +248,8 @@ fi
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_COMMON_DATA_DIR},target=/var/BlackmagicDesign \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_DATABASE},target=/opt/resolve/Resolve\ Disk\ Database \
      --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_MEDIA},target=/opt/resolve/Media \
+     --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_FAIRLIGHT_DIR},target=/opt/resolve/Fairlight \
+     --mount type=bind,source=${RESOLVE_MOUNTS_PATH}/${RESOLVE_EXTRAS_DIR},target=/opt/resolve/Extras \
      "${MOUNT_CURSOR_THEME[@]}" \
      "${CGROUP_RULE[@]}" \
      "${MOUNT_SYSTEM_FONTS[@]}" \
@@ -248,5 +259,4 @@ fi
      ${CONTAINER_RUN_ARGS} \
      --rm \
      --name="resolve_container" \
-     resolve:${RESOLVE_TAG} $*
-
+     resolve:${RESOLVE_TAG} "$@"
