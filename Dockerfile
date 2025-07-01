@@ -15,7 +15,7 @@ FROM ${BASE_IMAGE}
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
 ARG ARCH=x86_64
-ARG NVIDIA_VERSION=525.105
+ARG NVIDIA_VERSION=570.169
 ARG NO_PIPEWIRE=0
 ARG ZIPNAME
 ARG BUILD_X264_ENCODER_PLUGIN=0
@@ -33,7 +33,7 @@ RUN if [[ `dnf list libxcrypt-compat` == *libxcrypt-compat* ]]; then export EXTR
        && export NVIDIA_VERSION=$NVIDIA_VERSION \
        && export ARCH=$ARCH \
        && dnf update --refresh -y \
-       && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python39 mesa-dri-drivers -y \
+       && dnf install dnf-plugins-core xorg-x11-server-Xorg libXcursor unzip alsa-lib librsvg2 libGLU sudo module-init-tools libgomp xcb-util python312 mesa-dri-drivers -y \
        && dnf install epel-release -y && dnf install xcb-util-cursor libglvnd-devel -y \
        && if [ ! -z "${EXTRA_PACKS}" ]; then dnf install ${EXTRA_PACKS} -y ; fi \
        && if [[ "${NO_PIPEWIRE}" == 0 ]] ; then \
