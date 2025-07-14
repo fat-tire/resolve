@@ -15,7 +15,7 @@ FROM ${BASE_IMAGE}
 # get the arch and nvidia version from the host.  These are default values overridden in build.sh
 
 ARG ARCH=x86_64
-ARG NVIDIA_VERSION=570.169
+ARG NVIDIA_VERSION=575.64.03
 ARG NO_PIPEWIRE=0
 ARG ZIPNAME
 ARG BUILD_X264_ENCODER_PLUGIN=0
