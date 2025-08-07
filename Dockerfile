@@ -80,7 +80,9 @@ RUN cd /tmp \
     && cd squashfs-root \
     && ./AppRun -i -a -y \
     && cat /tmp/squashfs-root/docs/License.* \
-    && rm -rf /tmp/*.run /tmp/squashfs-root /tmp/*.zip /tmp/*.pdf
+    && rm -rf /tmp/*.run /tmp/squashfs-root /tmp/*.zip /tmp/*.pdf \
+    && mkdir -p "/opt/resolve/Apple Immersive/Calibration"
+
 
 # build the x264 encoder plugin from source and move it in position
 
