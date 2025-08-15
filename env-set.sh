@@ -41,6 +41,54 @@ else
    echo "The container's bind-mounts path (RESOLVE_MOUNTS_PATH) was manually set to : ${RESOLVE_MOUNTS_PATH}"
 fi
 
+# Read custom bind mounts from configuration file
+if [ -f "${BASH_SOURCE%/*}/bind_mounts.conf" ]; then
+   echo "Reading bind mounts from bind_mounts.conf..."
+   while IFS= read -r source || [ -n "$source" ]; do
+      # Skip empty lines
+      [ -z "$source" ] && continue
+
+      # Skip comment lines (lines starting with #)
+      [ "${source:0:1}" = "#" ] && continue
+
+      # Check if the line defines a TARGET
+      if [[ "$source" =~ ^TARGET=.* ]]; then
+         TARGET="${source#TARGET=}"
+         echo "Setting target path within container to: $TARGET"
+         continue
+      fi
+
+      # Trim whitespace from source path
+      source="${source#"${source%%[![:space:]]*}"}"
+      source="${source%"${source##*[![:space:]]}"}"
+
+      # Replace ~ with the home directory
+      source="${source//\~/$HOME}"
+
+      if [ ! -e "$source" ]; then
+         echo "Warning: Bind mount source path does not exist: $source"
+         continue
+      fi
+
+      if [ ! -r "$source" ]; then
+         echo "Warning: Bind mount source path is not readable: $source"
+         continue
+      fi
+
+      # Create a sanitized target name from the source path's basename
+      target_name=$(basename "$source" | tr ' ' '_')
+
+      if [ -z "$TARGET" ]; then
+         TARGET="/opt/resolve/Media"
+      fi
+
+      target="${TARGET}/${target_name}"
+      RESOLVE_BIND_SOURCES+=("$source")
+      RESOLVE_BIND_TARGETS+=("$target")
+      echo "Added bind mount: $source -> $target"
+   done <"${BASH_SOURCE%/*}/bind_mounts.conf"
+fi
+
 # and notify if other tags were overridden
 
 if [ ! -z ${RESOLVE_TAG} ]; then
@@ -50,4 +98,3 @@ fi
 if [ ! -z ${RESOLVE_ZIP} ]; then
    echo "The Resolve zip file location (RESOLVE_ZIP) was manually set to : ${RESOLVE_ZIP}"
 fi
-
