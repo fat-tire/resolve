@@ -212,6 +212,14 @@ fi
 
 set -x
 
+# calculate container /dev/shm to be 25% of host's memory or 2048M, whichever is more.
+
+SHM_SIZE_MB=$((MEM_TOTAL_KB / 1024 / 4))
+if [ "$SHM_SIZE_MB" -lt 2048 ]; then
+    SHM_SIZE_MB=2048
+fi
+
+
 "${CONTAINER_ENGINE}" run -it \
      --user resolve:resolve \
      --env DISPLAY=$DISPLAY \
@@ -257,6 +265,7 @@ set -x
      "${MOUNT_EXTRAS[@]}" \
      "${NET_DRIVER}" \
      ${CONTAINER_RUN_ARGS} \
+	 --shm-size=${SHM_SIZE_MB} \
      --rm \
      --name="resolve_container" \
      resolve:${RESOLVE_TAG} "$@"
